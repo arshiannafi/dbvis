@@ -1,0 +1,8 @@
+{
+    "name": "bam-dbvis",
+    "version": "1.0.0",
+    "dependencies": {
+        "express": "^4.0.0",
+        "body-parser": "^1.15.0"
+    }
+}
