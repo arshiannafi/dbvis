@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <title>Tester - MySQL DB Adapter</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        Host
+        <input id='input_host' type='text' placeholder='host'>
+        <br>
+
+        Port
+        <input id='input_port' type='text' placeholder='port' value='3306'>
+        <br>
+
+        Username
+        <input id='input_user' type='text' placeholder='username'>
+        <br>
+
+        Password
+        <input id='input_pass' type='text' placeholder='password'>
+        <br>
+
+        <input type='button' value='Fetch databases' onclick='fetchDatabases()'>
+        <br>
+
+        Database
+        <input id='input_database' type='text' placeholder='database'>
+        <br>
+
+        <input type='button' value='Fetch details' onclick='fetchDatabaseDetails()'>
+        <div id='view_databaseDetails'></div>
+
+        <div id='view_response'></div>
+
+        <!--End of content-->
+
+
+
+        <script src="js/jquery-3.1.0.min.js" type="text/javascript"></script>
+        <script>
+
+            function fetchDatabases() {
+                $.ajax({
+                    url: 'http://localhost:3000/sqldb/fetchDatabases',
+                    type: 'GET',
+                    data: {
+                        host: $('#input_host').val(),
+                        port: $('#input_port').val(),
+                        user: $('#input_user').val(),
+                        password: $('#input_pass').val()
+                    },
+                    success: function (data) {
+                        $('#view_response').empty();
+                        $('#view_response').append(data);
+                    },
+                    error: function (data) {
+                        // handle error here
+                    }
+                });
+            }
+
+            function fetchDatabaseDetails() {
+                $.ajax({
+                    url: 'http://localhost:3000/sqldb/fetchDatabaseDetails',
+                    type: 'GET',
+                    data: {
+                        host: $('#input_host').val(),
+                        port: $('#input_port').val(),
+                        user: $('#input_user').val(),
+                        password: $('#input_pass').val(),
+                        database: $('#input_database').val()
+                    },
+                    success: function (data) {
+                        $('#view_response').empty();
+                        $('#view_response').append(data);
+                    },
+                    error: function (data) {
+                        // handle error here
+                    }
+                });
+            }
+
+        </script>
+    </body>
+</html>
