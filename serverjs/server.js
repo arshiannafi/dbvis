@@ -20,7 +20,7 @@ app.get('/data', function (req, res) {
 });
 
 // Database Adapter
-require('./serverjs/MySQLDatabaseAdapter.js')(app);
+require('./MySQLDatabaseAdapter.js')(app);
 
 /******************************** Port assignment *****************************/
 server.listen(3000, function () {
