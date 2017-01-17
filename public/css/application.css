@@ -1,0 +1,6 @@
+.project-list {
+    height: 400px;
+    width: 600px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
