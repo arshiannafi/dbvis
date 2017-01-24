@@ -43,16 +43,18 @@
             function fetchDatabases() {
                 $.ajax({
                     url: 'http://localhost:3000/sqldb/fetchDatabases',
-                    type: 'GET',
-                    data: {
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=UTF-8',
+                    data: JSON.stringify({
                         host: $('#input_host').val(),
                         port: $('#input_port').val(),
                         user: $('#input_user').val(),
                         password: $('#input_pass').val()
-                    },
+                    }),
                     success: function (data) {
                         $('#view_response').empty();
-                        $('#view_response').append(data);
+                        $('#view_response').append(JSON.stringify(data));
                     },
                     error: function (data) {
                         // handle error here
@@ -63,17 +65,19 @@
             function fetchDatabaseDetails() {
                 $.ajax({
                     url: 'http://localhost:3000/sqldb/fetchDatabaseDetails',
-                    type: 'GET',
-                    data: {
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=UTF-8',
+                    data: JSON.stringify({
                         host: $('#input_host').val(),
                         port: $('#input_port').val(),
                         user: $('#input_user').val(),
                         password: $('#input_pass').val(),
                         database: $('#input_database').val()
-                    },
+                    }),
                     success: function (data) {
                         $('#view_response').empty();
-                        $('#view_response').append(data);
+                        $('#view_response').append(JSON.stringify(data));
                     },
                     error: function (data) {
                         // handle error here
