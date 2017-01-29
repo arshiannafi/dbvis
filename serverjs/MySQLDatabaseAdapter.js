@@ -118,5 +118,32 @@ module.exports = function(app) {
 
     });
 
+    app.post('/sqldb/fetchTableLinks', function(req, res) {
+
+        var dbParams = req.body; // getting db data out of request params
+
+        // SQL query string
+        var queryString = 'select table_name, referenced_table_name' +
+            ' from information_schema.key_column_usage' +
+            ' where constraint_schema = "' + dbParams.database + '"' +
+            ' and referenced_table_name is not null';
+
+        // Success callback function
+        var callback_success = function(data) {
+            res.json(data); // Respond with the data
+        };
+
+        // Faileure callback function
+        var callback_faileure = function(errMsg) {
+            res.status(400); // Setting HTTP status to Error
+            res.json({
+                'error': errMsg
+            }); // responding with a message
+        };
+
+        // Executing the query
+        query(dbParams, queryString, callback_success, callback_faileure);
+
+    });
 
 };
