@@ -1,6 +1,7 @@
 .project-list {
     height: 400px;
     width: 600px;
+    margin: 25px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -16,5 +17,42 @@
 
 .med-size {
     height: 400px;
-    width:600px;
+    width: 600px;
+}
+
+.lg-size {
+    height: 800px;
+    width: 1000px;
+}
+
+.select-panel {
+    height: 580px;
+    width: 650px;
+}
+
+.select-btns {
+    height: 100px;
+    width: 600px;
+    margin: 0px 15px;
+}
+
+.select-btn-lg {
+    height: 100px;
+    width: 180px;
+    margin: 10px;
+}
+
+.select-btn-sm {
+    height: 45px;
+    width: 180px;
+    margin-bottom: 10px;
+}
+
+.select-btn-col {
+    margin: 10px;
+}
+
+.select-btn-row>.select-btn-col,
+.select-btn-row>.btn {
+    float: left;
 }

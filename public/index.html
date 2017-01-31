@@ -16,28 +16,42 @@
 
     <div class="container">
 
-        <div id="view-select-proj" class="center border">
+        <div id="view-select-proj">
 
-            <div class="project-list border">
+            <div class="select-panel  center">
+                <div id="project-list" class="project-list border">
+                </div>
+                <div class="select-btns select-btn-row">
+                    <button id="new-proj-btn" class="btn btn-success select-btn-lg">Create Project</button>
+                    <div class="select-btn-col">
+                        <div class="select-btn-row">
+                            <button id="edit-proj-btn" class="btn btn-warning select-btn-sm">Edit</button>
+                        </div>
+                        <div class="select-btn-row">
+                            <button id="delete-proj-btn" class="btn btn-danger select-btn-sm">Delete</button>
+                        </div>
+                    </div>
+                    <button id="open-proj-btn" class="btn btn-info select-btn-lg">Open</button>
+                </div>
             </div>
-
         </div>
 
-        <div id="view-create-proj" class="center med-size border">
+        <div id="view-create-proj" class="center lg-size">
 
             <form id="create-form">
                 <input type="text" name="projectName" placeholder="Project Name" required><br>
                 <input type="text" name="address" placeholder="IP Address" required><br>
                 <input type="text" name="username" placeholder="Username" required><br>
                 <input type="password" name="password" placeholder="Password" required><br>
+                <button id="create-btn" class="btn btn-warning">Cancel</button>
                 <button id="create-btn" class="btn btn-success">Create Project</button>
             </form>
 
         </div>
 
-        <div id="view-create-proj" class="center med-size border">
+        <div id="view-edit-proj" class="center lg-size">
 
-            <form id="create-form">
+            <form id="edit-form">
                 <input type="text" name="projectName" placeholder="Project Name" required><br>
                 <input type="text" name="address" placeholder="IP Address" required><br>
                 <input type="text" name="username" placeholder="Username" required><br>

@@ -51,6 +51,11 @@ Consider adding attributes:
     showAnimation
 which store callback functions that can be called from the show/hide functions
 of ViewController
+
+Groups:
+0 - Entire Window
+1 - Existing Projects, New Project, Edit Project
+
 */
 class View {
 
@@ -62,5 +67,13 @@ class View {
 
 }
 
-//TESTING SCRIPTS
-var vc = new ViewController();
+//TESTING
+vc = new ViewController();
+view = new View("view-select-proj", 1);
+vc.add(view);
+view = new View("view-create-proj", 1);
+vc.add(view);
+view = new View("view-edit-proj", 1);
+vc.add(view);
+
+vc.show("view-select-proj");
