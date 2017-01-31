@@ -7,14 +7,20 @@
     <div class="header">
         <div class="logo-container">
             <div class="logo">
+
+                <!-- TODO: create BAM logo -->
+
             </div>
         </div>
         <div class="title">
+
+                <!-- TODO: Make Header Pretty -->
+
             <span>Database Visualizer</span>
         </div>
     </div>
 
-    <div class="container">
+    <div id="view-home" class="container">
 
         <div id="view-select-proj">
 
@@ -72,7 +78,46 @@
 
     </div>
 
-    <script src="js/jquery-3.1.0.min.js"></script>
+    <div id="view-db-vis">
+
+        <div id="sidebar" class="left-fill">
+
+            <!-- TODO: Make the sidebar pretty -->
+
+            <button id="back-btn" class="btn">Back</button>
+
+            <div class="layout-btns">
+                <div>
+                    <span>Layouts</span>
+                </div>
+                <div>
+                    <button id="grid-btn" class="btn">Grid</button>
+                    <button id="force-dir-btn" class="btn">Force Directed</button>
+                    <button id="circ-btn" class="btn">Circular</button>
+                    <button id="layered-btn" class="btn">Layered</button>
+                </div>
+            </div>
+
+            <div class="entities-tree">
+                <div>
+                    <span>Entities</span>
+                </div>
+                <div>
+
+                    <!-- TODO: add checkboxes here for entity hiding/showing -->
+
+                </div>
+            </div>
+
+        </div>
+
+        <div id="visualization" class="right-fill">
+        </div>
+
+    </div>
+
+    <script src="js/utils/jquery-3.1.0.min.js"></script>
+    <script src="js/utils/go-debug.js"></script>
     <script src="js/view.js"></script>
 
 </body>

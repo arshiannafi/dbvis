@@ -1,7 +1,27 @@
 IDs
 
 Views:
+view-home
+view-db-vis
+view-select-proj
+view-create-proj
+view-edit-proj
 
 Buttons:
+new-proj-btn
+edit-proj-btn
+delete-proj-btn
+open-proj-btn
+cancel-create-btn
+create-proj-btn
+save-proj-btn
+discard-change-btn
+back-btn
+grid-btn
+force-dir-btn
+circ-btn
+layered-btn
 
 Forms:
+create-form
+edit-form
