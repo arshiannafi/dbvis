@@ -1,3 +1,7 @@
+.header {
+    height: 80px;
+}
+
 .project-list {
     height: 400px;
     width: 600px;
@@ -19,7 +23,7 @@
     width: 400px;
 }
 
-/* START OF select view classes */
+/* START OF select view */
 .select-panel {
     height: 580px;
     width: 650px;
@@ -51,9 +55,9 @@
 .select-btn-row>.btn {
     float: left;
 }
-/* END OF select view classes */
+/* END OF select view */
 
-/* START OF create view classes */
+/* START OF create view */
 .create-panel {
     height: 300px;
     width: 400px;
@@ -83,4 +87,24 @@
     height: 45px;
     width: 178px;
     margin: 10px;
+}
+/* END OF create view */
+
+/* START OF db visualization */
+.left-fill {
+    position: absolute;
+    top: 80px;
+    bottom: 0px;
+    left: 0px;
+    width: 250px;
+    background-color: #6699ff;
+}
+
+.right-fill {
+    position: absolute;
+    top: 80px;
+    right: 0px;
+    bottom: 0px;
+    left: 250px;
+    background-color:  #e6eeff;
 }
