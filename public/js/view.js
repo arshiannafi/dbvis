@@ -76,4 +76,4 @@ vc.add(view);
 view = new View("view-edit-proj", 1);
 vc.add(view);
 
-vc.show("view-select-proj");
+vc.show("view-create-proj");
