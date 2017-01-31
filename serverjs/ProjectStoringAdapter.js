@@ -9,10 +9,9 @@
  *      getProjectInfo
  *      
  */
-
 var fileSystem = require('fs');
-
 module.exports = {
+    
     
     
     /**
@@ -38,8 +37,8 @@ module.exports = {
             return;
         }
         
+        // appened json to filename to specify that it's a json file
         var filename = projectParams.name.concat('.json');
-        
         
         // Write to file
         fileSystem.writeFile('./Projects/'.concat(filename), JSON.stringify(projectParams) , 'utf-8', function(err) {
@@ -79,10 +78,9 @@ module.exports = {
                             callback_success(projects);
                         }
                     }, function(err) {
-                        console.log('Could not load project: ' + listItem + ' because of error:');
-                        console.log(err);
+                        console.log('Could not load project: ' + listItem + ' because of error:' + err);
                         filesDone = filesDone + 1; 
-                        if(filesDone == files.length-1) {
+                        if(filesDone == files.length) {
                             callback_success(projects);
                         }
                     });
@@ -100,6 +98,13 @@ module.exports = {
      */
     getProjectInfo: function(name, callback_success, callback_failure) {
         
+        if(!(typeof name == 'string' || name instanceof String)) {
+            callback_failure('Project name is not a string');
+            return;
+        }
+            
+            
+        
         // get project file name
         filename = './Projects/'.concat(name.concat('.json')); // may want to sanatize inputs
         
@@ -115,6 +120,7 @@ module.exports = {
                 }catch(e){
                     console.log('Could not parse file: '.concat(name));
                     callback_failure(e);
+                    return;
                 }
                 
                 console.log('Got project: '.concat(name));
