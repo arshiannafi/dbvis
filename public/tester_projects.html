@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script type="text/javascript" src="./js/projects.js">
+        </script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var errorFunc = function(){};
+            
+            getAllProjects("http://localhost:3000", function(projects){}, errorFunc);
+            
+			var projectData = {name: "Test321",
+							   ipaddress: "12.32.142.32"};
+            var getProjectFunc = function() {
+				getProject(projectData.name, "http://localhost:3000", function(project){}, errorFunc);
+			};
+            
+			saveProject(projectData, "http://localhost:3000", getProjectFunc, errorFunc);
+		    
+        </script>
+    </body>
+</html>
