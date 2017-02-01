@@ -1,0 +1,110 @@
+.header {
+    height: 80px;
+}
+
+.project-list {
+    height: 400px;
+    width: 600px;
+    margin: 25px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.border {
+    border-style: solid;
+    border-width: 1px;
+}
+
+.center {
+    margin: auto;
+}
+
+.thin-form {
+    width: 400px;
+}
+
+/* START OF select view */
+.select-panel {
+    height: 580px;
+    width: 650px;
+}
+
+.select-btns {
+    height: 100px;
+    width: 600px;
+    margin: 0px 15px;
+}
+
+.select-btn-lg {
+    height: 100px;
+    width: 180px;
+    margin: 10px;
+}
+
+.select-btn-sm {
+    height: 45px;
+    width: 180px;
+    margin-bottom: 10px;
+}
+
+.select-btn-col {
+    margin: 10px;
+}
+
+.select-btn-row>.select-btn-col,
+.select-btn-row>.btn {
+    float: left;
+}
+/* END OF select view */
+
+/* START OF create view */
+.create-panel {
+    height: 300px;
+    width: 400px;
+}
+
+.create-input {
+    width: 380px;
+    height: 30px;
+    margin: 10px;
+    padding-left: 5px;
+    border-radius: 4px;
+    border-width: 2px;
+    border-style: groove;
+}
+
+.create-btn-row>.btn {
+    float: left;
+}
+
+.create-btns {
+    height: 100px;
+    width: 600px;
+    margin: 0px 15px;
+}
+
+.create-btn-sm {
+    height: 45px;
+    width: 178px;
+    margin: 10px;
+}
+/* END OF create view */
+
+/* START OF db visualization */
+.left-fill {
+    position: absolute;
+    top: 80px;
+    bottom: 0px;
+    left: 0px;
+    width: 250px;
+    background-color: #6699ff;
+}
+
+.right-fill {
+    position: absolute;
+    top: 80px;
+    right: 0px;
+    bottom: 0px;
+    left: 250px;
+    background-color:  #e6eeff;
+}

@@ -1,1 +1,123 @@
-Hello world
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/application.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo">
+
+                <!-- TODO: create BAM logo -->
+
+            </div>
+        </div>
+        <div class="title">
+
+                <!-- TODO: Make Header Pretty -->
+
+            <span>Database Visualizer</span>
+        </div>
+    </div>
+
+    <div id="view-home" class="container">
+
+        <div id="view-select-proj">
+
+            <div class="select-panel center">
+                <div id="project-list" class="project-list border">
+                </div>
+                <div class="select-btns select-btn-row">
+                    <button id="new-proj-btn" class="btn btn-success select-btn-lg">Create Project</button>
+                    <div class="select-btn-col">
+                        <div class="select-btn-row">
+                            <button id="edit-proj-btn" class="btn btn-warning select-btn-sm">Edit</button>
+                        </div>
+                        <div class="select-btn-row">
+                            <button id="delete-proj-btn" class="btn btn-danger select-btn-sm">Delete</button>
+                        </div>
+                    </div>
+                    <button id="open-proj-btn" class="btn btn-info select-btn-lg">Open</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-create-proj">
+
+            <div class="create-panel center">
+                <form id="create-form">
+                    <input class="create-input" type="text" name="projectName" placeholder="Project Name" required><br>
+                    <input class="create-input" type="text" name="address" placeholder="IP Address" required><br>
+                    <input class="create-input" type="text" name="username" placeholder="Username" required><br>
+                    <input class="create-input" type="password" name="password" placeholder="Password" required>
+                    <div>
+                        <button id="cancel-create-btn" class="btn btn-warning create-btn-sm">Cancel</button>
+                        <button id="create-proj-btn" class="btn btn-success create-btn-sm">Create Project</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <div id="view-edit-proj">
+
+            <div class="create-panel center">
+                <form id="edit-form">
+                    <input class="create-input" type="text" name="projectName" placeholder="Project Name" required><br>
+                    <input class="create-input" type="text" name="address" placeholder="IP Address" required><br>
+                    <input class="create-input" type="text" name="username" placeholder="Username" required><br>
+                    <input class="create-input" type="password" name="password" placeholder="Password" required>
+                    <div>
+                        <button id="save-proj-btn" class="btn btn-warning create-btn-sm">Save</button>
+                        <button id="discard-change-btn" class="btn btn-success create-btn-sm">Discard</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="view-db-vis">
+
+        <div id="sidebar" class="left-fill">
+
+            <!-- TODO: Make the sidebar pretty -->
+
+            <button id="back-btn" class="btn">Back</button>
+
+            <div class="layout-btns">
+                <div>
+                    <span>Layouts</span>
+                </div>
+                <div>
+                    <button id="grid-btn" class="btn">Grid</button>
+                    <button id="force-dir-btn" class="btn">Force Directed</button>
+                    <button id="circ-btn" class="btn">Circular</button>
+                    <button id="layered-btn" class="btn">Layered</button>
+                </div>
+            </div>
+
+            <div class="entities-tree">
+                <div>
+                    <span>Entities</span>
+                </div>
+                <div>
+
+                    <!-- TODO: add checkboxes here for entity hiding/showing -->
+
+                </div>
+            </div>
+
+        </div>
+
+        <div id="visualization" class="right-fill">
+        </div>
+
+    </div>
+
+    <script src="js/utils/jquery-3.1.0.min.js"></script>
+    <script src="js/utils/go-debug.js"></script>
+    <script src="js/view.js"></script>
+
+</body>
