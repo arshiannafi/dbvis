@@ -66,7 +66,7 @@ module.exports = function(app) {
         var dbParams = req.body; // getting db data out of request params
 
         // SQL query string
-        var queryString = 'select distinct TABLE_SCHEMA from information_schema.columns';
+        var queryString = 'select distinct table_schema from information_schema.columns';
 
         // Success callback function
         var callback_success = function(data) {
@@ -95,10 +95,9 @@ module.exports = function(app) {
         var dbParams = req.body; // getting db data out of request params
 
         // SQL query string
-        var queryString = 'select TABLE_NAME, COLUMN_NAME, ORDINAL_POSITION, COLUMN_KEY' +
+        var queryString = 'select table_name, column_name, ordinal_position, column_key' +
             ' from information_schema.columns' +
-            ' where table_schema = "' + dbParams.database + '"' +
-            ' order by table_name,ordinal_position';
+            ' where table_schema = "' + dbParams.database + '"';
 
         // Success callback function
         var callback_success = function(data) {
@@ -123,7 +122,7 @@ module.exports = function(app) {
         var dbParams = req.body; // getting db data out of request params
 
         // SQL query string
-        var queryString = 'select table_name, referenced_table_name' +
+        var queryString = 'select table_name, column_name, referenced_table_name, referenced_column_name' +
             ' from information_schema.key_column_usage' +
             ' where constraint_schema = "' + dbParams.database + '"' +
             ' and referenced_table_name is not null';

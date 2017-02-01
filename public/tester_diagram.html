@@ -16,128 +16,146 @@
     <!-- http://gojs.net/latest/samples/entityRelationship.html -->
     <script>
         /*
-        *
-        * Usage:
-        *   To render a diagram:
-        *       initDiagramCanvas();
-        *       // get data
-        *       // parse data into nodes and links
-        *       render(nodes, links);
-        *
-        */
+         * Usage:
+         *   To render a diagram:
+         *       initDiagramCanvas();
+         *       // get data
+         *       // parse data into nodes and links
+         *       render(nodes, links);
+         *
+         */
 
 
         // Global variables
-        var master = {}; // data structure to hold and access schema data
-
+        var dictionary_cols = []
+        var dictionary_tables = [];
+        var __relationText_from = '0..N';
+        var __relationText_to = '1';
         // End of globar variables
 
 
         // When window loads
         window.onload = function onLoad() {
 
-            // Init canvas
-            initDiagramCanvas();
-
-            // Getting schema data
-            $.ajax({
+            // AJAX 1 - Fetfhing database details (all column information)
+            var ajax_fetchDatabaseDetails = $.ajax({
                 url: 'http://localhost:3000/sqldb/fetchDatabaseDetails',
-                type: 'GET',
-                data: {
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=UTF-8',
+                data: JSON.stringify({
                     host: 'localhost',
                     port: '3306',
                     user: 'root',
                     password: '@scar2015',
                     database: 'oscar15_bc'
-                },
-                success: function(data) {
-                    // parse to JSON object
-                    data = JSON.parse(data);
+                })
+            });
 
-                    // For each row in the response data
-                    for (var i in data) {
+            // AJAX 2 - Fetching table links
+            var ajax_fetchTableLinks = $.ajax({
+                url: 'http://localhost:3000/sqldb/fetchTableLinks',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=UTF-8',
+                data: JSON.stringify({
+                    host: 'localhost',
+                    port: '3306',
+                    user: 'root',
+                    password: '@scar2015',
+                    database: 'oscar15_bc'
+                })
+            });
 
-                        // Prints each object in data. I.e. column
-                        // console.log(data[i]);
+            // When both AJAX calls are finished
+            $.when(ajax_fetchDatabaseDetails, ajax_fetchTableLinks).done(function(jqxhr1, jqxhr2) {
 
-                        // evaluating if column is primary key
-                        var isKey = data[i].COLUMN_KEY === 'PRI';
+                // parse columns' data to JSON object
+                data = JSON.parse(ajax_fetchDatabaseDetails.responseText);
 
-                        // setting the icon (on the left of name) of the attribute
-                        // blue cube by default
-                        var figure = 'Cube1';
-                        var color = 'blue';
-                        if (isKey) {
-                            // yellow dimond if is primary key
-                            figure = 'Decision';
-                            color = 'yellow';
-                        }
+                for (var i in data) {
+                    dictionary_cols[data[i].table_name + '.' + data[i].column_name] = data[i];
+                }
 
-                        // Extract column information
-                        var col = {
-                            'name': data[i].COLUMN_NAME,
-                            'isKey': isKey, // (boolean) primary key
-                            'figure': figure,
-                            'color': color
-                        }
+                for (c in dictionary_cols) {
 
-                        // If the master variable doesn not have the table,
-                        if (master[data[i].TABLE_NAME] === undefined) {
-                            // add new
-                            master[data[i].TABLE_NAME] = {
-                                'cols': [col]
-                            };
-                        } else {
-                            // add column to existing
-                            master[data[i].TABLE_NAME].cols.push(col);
-                        }
+                    // evaluating if column is primary key
+                    var isKey = dictionary_cols[c].column_key === 'PRI';
+
+                    // setting the icon (on the left of name) of the attribute
+                    // blue cube by default
+                    var figure = 'Cube1';
+                    var color = 'blue';
+                    if (isKey) {
+                        // yellow dimond if is primary key
+                        figure = 'Decision';
+                        color = 'yellow';
                     }
 
-                    // array of entities that show up as a node in the diagram
-                    var nodes = [];
-
-                    // For each table in the master variable
-                    for (var k in master) {
-                        // Add entity
-                        nodes.push({
-                            'key': k, // table name
-                            'items': master[k].cols // cols of the table
-                        });
+                    // Extract column information
+                    var col = {
+                        'name': dictionary_cols[c].column_name,
+                        'isKey': isKey, // (boolean) primary key
+                        'figure': figure,
+                        'color': color
                     }
 
-                    // // Example for implementation
-                    //
-                    // var linkDataArray = [{
-                    //         from: "Products",
-                    //         to: "Suppliers",
-                    //         text: "0..N",
-                    //         toText: "1"
-                    //     },
-                    //     {
-                    //         from: "Products",
-                    //         to: "Categories",
-                    //         text: "0..N",
-                    //         toText: "1"
-                    //     },
-                    //     {
-                    //         from: "Order Details",
-                    //         to: "Products",
-                    //         text: "0..N",
-                    //         toText: "1"
-                    //     }
-                    // ];
+                    // If the dictionary variable doesn not have the table,
+                    if (dictionary_tables[dictionary_cols[c].table_name] === undefined) {
+                        // add new
+                        dictionary_tables[dictionary_cols[c].table_name] = {
+                            'cols': [col]
+                        };
+                    } else {
+                        // add column to existing
+                        dictionary_tables[dictionary_cols[c].table_name].cols.push(col);
+                    }
 
-                    var links = []; // todo
+                } // End of for each column
 
-                    render(nodes, links);
+                // array of entities that show up as a node in the diagram
+                var nodes = [];
 
-                }, // End of AJAX success function
+                // For each table in the dictionary variable
+                for (var k in dictionary_tables) {
+                    // Add entity
+                    nodes.push({
+                        'key': k, // table name
+                        'items': dictionary_tables[k].cols, // cols of the table
+                    });
+                }
 
-                error: function(data) {
-                    // handle error here
-                } // End of AJAX error function
+                // End of entity processing (table / node on the graph)
 
-            }); // End of AJAX call
+
+
+
+                var links = [];
+                data = JSON.parse(ajax_fetchTableLinks.responseText);
+
+                for (d in data) {
+                    var outgoingKey = data[d].table_name + '.' + data[d].column_name;
+                    var isPrimaryKey = (dictionary_cols[outgoingKey].column_key === 'PRI');
+                    if (isPrimaryKey) {
+                        // one to one relationship
+                        __relationText_from = '1';
+                    }
+
+                    links.push({
+                        'from': data[d].table_name,
+                        'to': data[d].referenced_table_name,
+                        'text': __relationText_from,
+                        'toText': __relationText_to
+                    });
+                }
+
+                render(nodes, links);
+
+            }); // End of function that exectues when 2 AJAX calls are done
+
+            // Init canvas
+            initDiagramCanvas();
+
         } // end of onLoad
 
         function render(nodeDataArray, linkDataArray) {
