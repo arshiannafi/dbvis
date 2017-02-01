@@ -30,9 +30,9 @@ module.exports = function(app) {
      *
      * @param {string} queryString
      * @param {function} callback_success
-     * @param {function} callback_faileure
+     * @param {function} callback_failure
      */
-    function query(dbParams, queryString, callback_success, callback_faileure) {
+    function query(dbParams, queryString, callback_success, callback_failure) {
 
         // MySQL library
         var mysql = require('mysql');
@@ -46,7 +46,7 @@ module.exports = function(app) {
             if (err) {
                 // Error
                 console.error('error connecting: ' + err.stack);
-                callback_faileure(err.code);
+                callback_failure(err.code);
             } else {
                 // Success
                 callback_success(rows);
@@ -73,8 +73,8 @@ module.exports = function(app) {
             res.json(data); // Respond with the data
         };
 
-        // Faileure callback function
-        var callback_faileure = function(errMsg) {
+        // failure callback function
+        var callback_failure = function(errMsg) {
             res.status(400); // Setting HTTP status to Error
             res.json({
                 'error': errMsg
@@ -82,7 +82,7 @@ module.exports = function(app) {
         };
 
         // Executing the query
-        query(dbParams, queryString, callback_success, callback_faileure);
+        query(dbParams, queryString, callback_success, callback_failure);
 
     });
 
@@ -104,8 +104,8 @@ module.exports = function(app) {
             res.json(data); // Respond with the data
         };
 
-        // Faileure callback function
-        var callback_faileure = function(errMsg) {
+        // failure callback function
+        var callback_failure = function(errMsg) {
             res.status(400); // Setting HTTP status to Error
             res.json({
                 'error': errMsg
@@ -113,7 +113,7 @@ module.exports = function(app) {
         };
 
         // Executing the query
-        query(dbParams, queryString, callback_success, callback_faileure);
+        query(dbParams, queryString, callback_success, callback_failure);
 
     });
 
@@ -132,8 +132,8 @@ module.exports = function(app) {
             res.json(data); // Respond with the data
         };
 
-        // Faileure callback function
-        var callback_faileure = function(errMsg) {
+        // failure callback function
+        var callback_failure = function(errMsg) {
             res.status(400); // Setting HTTP status to Error
             res.json({
                 'error': errMsg
@@ -141,7 +141,7 @@ module.exports = function(app) {
         };
 
         // Executing the query
-        query(dbParams, queryString, callback_success, callback_faileure);
+        query(dbParams, queryString, callback_success, callback_failure);
 
     });
 
