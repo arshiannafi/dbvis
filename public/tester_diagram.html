@@ -16,6 +16,11 @@
     <!-- http://gojs.net/latest/samples/entityRelationship.html -->
     <script>
         /*
+         * List of functions:
+         *      initDiagramCanvas()
+         *      render()
+         *      getImageTag()
+         * 
          * Usage:
          *   To render a diagram:
          *       initDiagramCanvas();
@@ -160,6 +165,10 @@
 
         function render(nodeDataArray, linkDataArray) {
             myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+        }
+
+        function getImageTag() {
+            return myDiagram.makeImage();
         }
 
         function initDiagramCanvas() {
