@@ -4,6 +4,14 @@ class ViewController {
         this.views = [];
     }
 
+    init() {
+        this.add(new View("view-home", 0));
+        this.add(new View("view-db-vis", 0));
+        this.add(new View("view-select-proj", 1, "view-home"));
+        this.add(new View("view-create-proj", 1, "view-home"));
+        this.add(new View("view-edit-proj", 1, "view-home"));
+    }
+
     add(v) {
 
         if (this.__getView(v.id) === undefined) {
@@ -59,6 +67,9 @@ which store callback functions that can be called from the show/hide functions
 of ViewController
 
 Groups:
+
+Views off the same group are mutually exclusive, only one appears at a time
+
 0 - Home (group 1 collectively), DB Schema visualization
 1 - Existing Projects, New Project, Edit Project
 
@@ -74,19 +85,140 @@ class View {
 
 }
 
-//TESTING
-vc = new ViewController();
+class ClickHandler {
 
-view = new View("view-home", 0);
-vc.add(view);
-view = new View("view-db-vis", 0);
-vc.add(view);
+    //Attaches handlers to objects that are never created/destroyed
+    static initStaticHandlers() {
 
-view = new View("view-select-proj", 1, "view-home");
-vc.add(view);
-view = new View("view-create-proj", 1, "view-home");
-vc.add(view);
-view = new View("view-edit-proj", 1, "view-home");
-vc.add(view);
+        //Select Project View
+        $("#new-proj-btn").click(this.showCreate);
+        $("#edit-proj-btn").click(this.showEdit);
+        $("#delete-proj-btn").click(this.delete);
+        $("#open-proj-btn").click(this.open);
 
-vc.show("view-db-vis");
+        //Create Project View
+        $("#cancel-create-btn").click(this.cancelCreate);
+        $("#create-proj-btn").click(this.create);
+
+        //Edit Project View
+        $("#cancel-edit-btn").click(this.cancelEdit);
+        $("#save-proj-btn").click(this.save);
+
+        //DBVis View
+        $("#back-btn").click(this.back);
+        $("#grid-btn").click(this.grid);
+        $("#force-dir-btn").click(this.forceDir);
+        $("#circ-btn").click(this.circular);
+        $("#layered-btn").click(this.layered);
+
+    }
+
+    static attach(id, handler) {
+        $("#" + id).click(handler);
+    }
+
+/* View switching handlers */
+    static showHome(e) {
+
+        vc.show("view-home");
+    }
+
+    static showSelect(e) {
+
+        //TODO: Render list of available projects
+
+        vc.show("view-select-proj");
+    }
+
+    static showCreate(e) {
+
+        vc.show("view-create-proj");
+    }
+
+    static showEdit(e) {
+
+        //TODO: Render existing project details to input fields
+
+        vc.show("view-edit-proj");
+    }
+
+    static back() {
+        vc.show("view-select-proj");
+    }
+
+/* Project manipulation handlers */
+    static open(e) {
+
+        //TODO: grab project id, begin rendering
+
+        vc.show("view-db-vis");
+    }
+
+    static create(e) {
+
+        //TODO: create project from input fields
+        // INCLUDE INPUT VALIDATION
+
+        vc.show("view-select-proj");
+    }
+
+    static save(e) {
+
+        //TODO: create project from input fields
+        // INCLUDE INPUT VALIDATION
+
+        vc.show("view-select-proj");
+    }
+
+    static delete(e) {
+
+        //TODO: Delete currently selected project
+
+    }
+
+    static cancelEdit(e) {
+
+        //TODO: whipe input fields
+
+        vc.show("view-select-proj");
+    }
+
+    static cancelCreate(e) {
+
+        //TODO: whipe input fields
+
+        vc.show("view-select-proj");
+    }
+
+/* Database Visualization button handlers */
+    static grid(e) {
+        //TODO: rerender DBVis with this layout
+        console.log("[ERROR] Not yet implemented")
+    }
+
+    static forceDir(e) {
+        //TODO: rerender DBVis with this layout
+        console.log("[ERROR] Not yet implemented")
+    }
+
+    static circular(e) {
+        //TODO: rerender DBVis with this layout
+        console.log("[ERROR] Not yet implemented")
+    }
+
+    static layered(e) {
+        //TODO: rerender DBVis with this layout
+        console.log("[ERROR] Not yet implemented")
+    }
+
+}
+
+//Initialize View Structure
+var vc = new ViewController();
+vc.init();
+
+//Initialize Click Handlers
+ClickHandler.initStaticHandlers();
+
+//start-up view
+vc.show("view-select-proj");

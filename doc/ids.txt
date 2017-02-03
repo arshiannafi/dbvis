@@ -15,7 +15,7 @@ open-proj-btn
 cancel-create-btn
 create-proj-btn
 save-proj-btn
-discard-change-btn
+cancel-edit-btn
 back-btn
 grid-btn
 force-dir-btn

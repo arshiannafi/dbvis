@@ -45,7 +45,7 @@
         <div id="view-create-proj">
 
             <div class="create-panel center">
-                <form id="create-form">
+                <form id="create-form" name="create-form">
                     <input class="create-input" type="text" name="projectName" placeholder="Project Name" required><br>
                     <input class="create-input" type="text" name="address" placeholder="IP Address" required><br>
                     <input class="create-input" type="text" name="username" placeholder="Username" required><br>
@@ -62,14 +62,14 @@
         <div id="view-edit-proj">
 
             <div class="create-panel center">
-                <form id="edit-form">
+                <form id="edit-form" name="edit-form">
                     <input class="create-input" type="text" name="projectName" placeholder="Project Name" required><br>
                     <input class="create-input" type="text" name="address" placeholder="IP Address" required><br>
                     <input class="create-input" type="text" name="username" placeholder="Username" required><br>
                     <input class="create-input" type="password" name="password" placeholder="Password" required>
                     <div>
-                        <button id="save-proj-btn" class="btn btn-warning create-btn-sm">Save</button>
-                        <button id="discard-change-btn" class="btn btn-success create-btn-sm">Discard</button>
+                        <button id="cancel-edit-btn" class="btn btn-warning create-btn-sm">Cancel</button>
+                        <button id="save-proj-btn" class="btn btn-success create-btn-sm">Save</button>
                     </div>
                 </form>
             </div>
