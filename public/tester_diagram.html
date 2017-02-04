@@ -19,8 +19,8 @@
          * List of functions:
          *      initDiagramCanvas()
          *      render()
-         *      getImageTag()
-         * 
+         *      downloadImage()
+         *
          * Usage:
          *   To render a diagram:
          *       initDiagramCanvas();
@@ -41,6 +41,9 @@
 
         // When window loads
         window.onload = function onLoad() {
+
+            // Init canvas
+            initDiagramCanvas();
 
             // AJAX 1 - Fetfhing database details (all column information)
             var ajax_fetchDatabaseDetails = $.ajax({
@@ -134,8 +137,8 @@
 
 
 
-
                 var links = [];
+
                 data = JSON.parse(ajax_fetchTableLinks.responseText);
 
                 for (d in data) {
@@ -158,17 +161,26 @@
 
             }); // End of function that exectues when 2 AJAX calls are done
 
-            // Init canvas
-            initDiagramCanvas();
-
         } // end of onLoad
 
+
+        /**
+         * This function renders/re-renders the given set of nodes and links.
+         *
+         * @param {Array} nodeDataArray
+         * @param {Array} linkDataArray
+         */
         function render(nodeDataArray, linkDataArray) {
             myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
         }
 
-        function getImageTag() {
-            return myDiagram.makeImage();
+        /**
+         * This function downloads an image of
+         * what is visible in the diagram in client's browser
+         */
+        function downloadImage() {
+            var url = myDiagram.makeImage().src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+            window.open(url);
         }
 
         function initDiagramCanvas() {
