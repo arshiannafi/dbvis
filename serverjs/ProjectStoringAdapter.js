@@ -7,7 +7,7 @@
  *      createProject
  *      getAllProjects
  *      getProjectInfo
- *      
+ *      deleteProjects
  */
 var fileSystem = require('fs');
 module.exports = {
@@ -67,8 +67,13 @@ module.exports = {
            if(err) {
                console.log('Could not read projects directory');
                callback_failure(err);
+               return;
             } else {
                 var projects = [];
+                if(files.length == 0) {
+                    callback_success(projects);
+                }
+                
                 var filesDone = 0;
                 files.forEach(function(listItem, index) {
                     module.exports.getProjectInfo(listItem.replace('.json', ''), function(project) {
@@ -76,12 +81,14 @@ module.exports = {
                         filesDone = filesDone + 1;
                         if(filesDone == files.length) {
                             callback_success(projects);
+                            return;
                         }
                     }, function(err) {
                         console.log('Could not load project: ' + listItem + ' because of error:' + err);
                         filesDone = filesDone + 1; 
                         if(filesDone == files.length) {
                             callback_success(projects);
+                            return;
                         }
                     });
                 });
@@ -98,33 +105,57 @@ module.exports = {
      */
     getProjectInfo: function(name, callback_success, callback_failure) {
         
+        // Make sure name is valid
         if(!(typeof name == 'string' || name instanceof String)) {
             callback_failure('Project name is not a string');
             return;
-        }
-            
-            
+        }  
         
         // get project file name
         filename = './Projects/'.concat(name.concat('.json')); // may want to sanatize inputs
         
+        // Read the file using file system
         fileSystem.readFile(filename, (err, data) => {
+            // Check if there's an error
             if (err) {
+                // Log the error
                 console.log('Could not get project: '.concat(name));
                 console.log(err);
+                // Callback the error
                 callback_failure(err); 
             } else {
                 
                 try{
+                    // Try parsing the data
                     project = JSON.parse(data);
                 }catch(e){
+                    // If not able to parse, callback with failure
                     console.log('Could not parse file: '.concat(name));
                     callback_failure(e);
                     return;
                 }
-                
+                // Return the project
                 console.log('Got project: '.concat(name));
                 callback_success(project);
+            }
+        });
+    },
+    
+    deleteProject: function(name, callback_success, callback_failure) {
+        
+        if(!(typeof name == 'string' || name instanceof String)) {
+            callback_failure('Provided name is invalid');
+            return;
+        }
+        
+        filename = './Projects/'.concat(name.concat('.json'));
+        fileSystem.unlink(filename, function(err) {
+            if(err) {
+                callback_failure(err);
+                return;
+            } else {
+                callback_success();
+                return;
             }
         });
     }

@@ -6,17 +6,38 @@
     </head>
     <body>
         <script type="text/javascript">
-            var errorFunc = function(){};
             
-            getAllProjects("http://localhost:3000", function(projects){}, errorFunc);
+            var projectData = {name: "Test321",
+                               ipaddress: "12.32.142.32"};
             
-			var projectData = {name: "Test321",
-							   ipaddress: "12.32.142.32"};
-            var getProjectFunc = function() {
-				getProject(projectData.name, "http://localhost:3000", function(project){}, errorFunc);
-			};
+            getAllProjects("http://localhost:3000", function(projects){
+                console.log("Got projects, now saving one");
+                
+                saveProject(projectData, "http://localhost:3000", function() {
+                    console.log("Saved project, now getting one");
+                    
+                    getProject(projectData.name, "http://localhost:3000", function(project){
+                        console.log("Got project, now deleting it.");
+                    
+                        deleteProject(projectData.name,  "http://localhost:3000", function() {
+                            console.log("Deleted project");              
+                        }, function(err) { // deleteProject error
+                            console.log("Error delete project");
+                        });
+                    }, function(err) { //getProject error
+                        console.log("Error getting test project")
+                    });
+
+                }, function(err) { // saveProject error
+                    console.log('Error saving test project');
+                });
+                
+            }, function(err){ // getAllProjects error
+                console.log("Error getting all projects");
+            });
             
-			saveProject(projectData, "http://localhost:3000", getProjectFunc, errorFunc);
+			
+            
 		    
         </script>
     </body>
