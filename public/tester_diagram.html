@@ -20,6 +20,7 @@
          *      initDiagramCanvas()
          *      render()
          *      downloadImage()
+         *      getRelatedTables()
          *
          * Usage:
          *   To render a diagram:
@@ -34,6 +35,8 @@
         // Global variables
         var dictionary_cols = []
         var dictionary_tables = [];
+        var nodes = [];
+        var links = [];
         var __relationText_from = '0..N';
         var __relationText_to = '1';
         // End of globar variables
@@ -121,9 +124,6 @@
 
                 } // End of for each column
 
-                // array of entities that show up as a node in the diagram
-                var nodes = [];
-
                 // For each table in the dictionary variable
                 for (var k in dictionary_tables) {
                     // Add entity
@@ -136,8 +136,6 @@
                 // End of entity processing (table / node on the graph)
 
 
-
-                var links = [];
 
                 data = JSON.parse(ajax_fetchTableLinks.responseText);
 
@@ -181,6 +179,23 @@
         function downloadImage() {
             var url = myDiagram.makeImage().src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
             window.open(url);
+        }
+
+        /**
+         * Given a table name, this function returns all related tables.
+         * Returns only outgoing edges.
+         *
+         * @param {String} tableName - The name of the table
+         * @returns {Array} List of related tables
+         */
+        function getRelatedTables(tableName) {
+            var relatedTables = [];
+            for (var i in links){
+                if (links[i].from === tableName){
+                    relatedTables.push(links[i].to);
+                }
+            }
+            return relatedTables;
         }
 
         function initDiagramCanvas() {
