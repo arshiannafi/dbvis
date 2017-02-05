@@ -45,6 +45,10 @@ class ViewController {
 
     }
 
+    clearFormInput(id) {
+        $("#" + id + " input").val('');
+    }
+
     __getView(id) {
         return this.views.find(function (view) {
             return view.id === id;
@@ -137,9 +141,14 @@ class ClickHandler {
 
     static showEdit(e) {
 
-        //TODO: Render existing project details to input fields
-
-        VC.show("view-edit-proj");
+        if(PM.activeProj) {
+            PM.loadEditForm()
+            VC.show("view-edit-proj");
+        } else {
+            console.log("[ERROR] No project selected");
+            //TODO: Display Error message to screen explaining that no project
+            // was selected
+        }
     }
 
     static back() {
@@ -160,7 +169,8 @@ class ClickHandler {
     }
 
     static save(e) {
-
+        e.preventDefault();
+        PM.edit();
         //TODO: create project from input fields
         // INCLUDE INPUT VALIDATION
 
@@ -168,7 +178,7 @@ class ClickHandler {
     }
 
     static delete(e) {
-
+        PM.delete();
         //TODO: Delete currently selected project
 
     }

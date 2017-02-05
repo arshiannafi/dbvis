@@ -162,6 +162,7 @@ class ProjectManager {
                 that.projects = json;
                 console.log("[INFO] Projects loaded successfully");
                 that.__populateList();
+                that.activeProj = null;
                 VC.show("view-select-proj");
             },
             function(){
@@ -186,6 +187,7 @@ class ProjectManager {
         saveProject(json, this.host,
             function() {
                 console.log("[INFO] Project saved");
+                VC.clearFormInput("create-form");
                 that.load();
             },
             function() {
@@ -193,18 +195,40 @@ class ProjectManager {
             });
     }
 
-    edit(name, json, cb) {
+    edit() {
 
         var that = this;
+
+        var json = {
+            name:       $("#edit-form input[name^='projectName']").val(),
+            IPaddress:  $("#edit-form input[name^='address']").val(),
+            db:         $("#edit-form input[name^='database']").val(),
+            username:   $("#edit-form input[name^='username']").val(),
+            password:   $("#edit-form input[name^='password']").val()
+        }
 
         //Save project to server
         saveProject(json, this.host,
             function(){
 
-                //TODO: Delete Project by name using Michael's delete function
-                // Reload list as part of callback
-                console.log("[WARN] ProjectManager.edit not yet implemented");
-                that.load();
+                console.log("[INFO] Project saved");
+
+                // If the names has been changed, the project by the old name
+                // needs to be deleted.
+                if (that.activeProj.name !== json.name) {
+
+                    console.log("[INFO] Deleting old project: " + that.activeProj.name);
+
+                    deleteProject(that.activeProj.name, that.host,
+                        function(){
+                            console.log("[INFO] Successfully delete: " + that.activeProj.name);
+                            that.load();
+                        },
+                        function(){
+                            console.log("[ERROR] Failed to delete project: " + that.activeProj.name);
+                        });
+                }
+
 
             },
             function() {
@@ -213,11 +237,27 @@ class ProjectManager {
 
     }
 
-    delete(name, cb) {
+    delete() {
 
-        //TODO: Delete Project by name using Michael's delete function
-        // Reload list as part of callback
+        var that = this;
 
+        deleteProject(that.activeProj.name, that.host,
+            function(){
+                console.log("[INFO] Successfully delete: " + that.activeProj.name);
+                that.load();
+            },
+            function(){
+                console.log("[ERROR] Failed to delete project: " + that.activeProj.name);
+            });
+    }
+
+    loadEditForm() {
+        console.log("[INFO] loadEditForm called");
+        $("#edit-form input[name^='projectName']").first().val(this.activeProj.name);
+        $("#edit-form input[name^='address']").first().val(this.activeProj.IPaddress);
+        $("#edit-form input[name^='database']").first().val(this.activeProj.db);
+        $("#edit-form input[name^='username']").first().val(this.activeProj.username);
+        $("#edit-form input[name^='password']").first().val(this.activeProj.password);
     }
 
 }
