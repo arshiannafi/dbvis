@@ -1,7 +1,7 @@
 /* ProjectStoringAdapterTests.js
 *
 *   This script is specifically for testing ProjectSotringAdapter
-*
+*   
 *
 *
 */
@@ -45,4 +45,28 @@ ProjectStoringAdapter.getAllProjects(function(projects) {
     console.log('Test getting all projects: passed.');
 }, function(err) {
     console.log('Test getting all projects: failed.');
+});
+
+var callback_success = function() {
+    console.log('Successfully deleted test1');
+}
+
+var callback_success2 = function() {
+    console.log
+}
+
+ProjectStoringAdapter.deleteProject('test1', function(){
+    console.log('Test deleteing test project 1: passed.');
+}, function(err) {
+    console.log('Test deleteing test project 1: failed.')
+});
+ProjectStoringAdapter.deleteProject('test2', function(){
+    console.log('Test deleteing test project 2: passed.');
+}, function(err) {
+    console.log('Test deleteing test project 2: failed.')
+});
+ProjectStoringAdapter.deleteProject('test3', function(){
+    console.log('Test deleteing non-existent project: failed.');
+}, function(err) {
+    console.log('Test deleteing non-existent project: passed.')
 });

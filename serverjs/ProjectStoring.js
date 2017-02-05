@@ -4,11 +4,11 @@ module.exports = function(app) {
     
     app.post('/projects/saveProject', function(req, res) {
 
-        var projectParams = req.body; // getting db data out of request params
+        var projectParams = req.body; // getting data out of request params
         
         // Success callback function
         var callback_success = function() {
-            res.json(""); // Respond with the data
+            res.json(''); // Respond with nothing
         };
 
         // Failure callback function
@@ -61,6 +61,19 @@ module.exports = function(app) {
         
         projects.getAllProjects(callback_success, callback_failure)
 
+    });
+    
+    app.post('/projects/deleteProject', function(req, res) {
+        var callback_success = function() {
+            res.send('');
+        }
+        var callback_failure = function(err) {
+            res.status(400); // Setting HTTP status to Error
+            res.json({
+                'error': err
+            });
+        }
+        projects.deleteProject(req.body.name, callback_success, callback_failure);
     });
 
 }

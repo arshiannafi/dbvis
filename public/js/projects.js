@@ -15,20 +15,16 @@ function saveProject(projectData, host, callback_success,
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            if(xmlHttp.responseText == "") {
-                callback_success();
-            } else {
-                callback_failure();
-            }
-        } else
+            callback_success();
+        } else if (xmlHttp.readyState == 4) {
             callback_failure();
+        }
     }
+    
+    
     xmlHttp.open("POST", host.concat('/projects/saveProject'), true); // true for asynchronous 
-    console.log("Saving: " + JSON.stringify(projectData));
     xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlHttp.send(JSON.stringify(projectData));
-    
-    
 }
 
 /**********************************************************
@@ -46,7 +42,7 @@ function getAllProjects(host, callback_success, callback_failure) {
     xmlHttp.onreadystatechange = function() { 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback_success(JSON.parse(xmlHttp.responseText));
-        else
+        else if (xmlHttp.readyState == 4)
             callback_failure();
     }
     xmlHttp.open("GET", host.concat('/projects/getAllProjects'), true); // true for asynchronous 
@@ -65,18 +61,47 @@ function getAllProjects(host, callback_success, callback_failure) {
 **********************************************************/
 function getProject(projectName, host, callback_success, callback_failure) {
     
-    var projecData = [];
+    var projectData = {};
     projectData.name = projectName;
     
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback_success(JSON.parse(xmlHttp.responseText));
-        else
+        else if (xmlHttp.readyState == 4) {
             callback_failure();
+        }
+            
     }
     
     xmlHttp.open("POST", host.concat('/projects/getProject'), true); // true for asynchronous 
+    xmlHttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xmlHttp.send(JSON.stringify(projectData));
+}
+
+/**********************************************************
+* function deleteProject
+*   Deletes the project specified by the projectName
+*   calls callback_success() on success.
+*   callback_failure(err) is called on failure.
+*
+*
+*
+**********************************************************/
+function deleteProject(projectName, host, callback_success, callback_failure) {
+    
+    var projectData = {};
+    projectData.name = projectName;
+    
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback_success();
+        else if (xmlHttp.readyState == 4)
+            callback_failure();
+    }
+    
+    xmlHttp.open("POST", host.concat('/projects/deleteProject'), true); // true for asynchronous 
     xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlHttp.send(JSON.stringify(projectData));
 }
