@@ -120,30 +120,30 @@ class ClickHandler {
 /* View switching handlers */
     static showHome(e) {
 
-        vc.show("view-home");
+        VC.show("view-home");
     }
 
     static showSelect(e) {
 
         //TODO: Render list of available projects
 
-        vc.show("view-select-proj");
+        VC.show("view-select-proj");
     }
 
     static showCreate(e) {
 
-        vc.show("view-create-proj");
+        VC.show("view-create-proj");
     }
 
     static showEdit(e) {
 
         //TODO: Render existing project details to input fields
 
-        vc.show("view-edit-proj");
+        VC.show("view-edit-proj");
     }
 
     static back() {
-        vc.show("view-select-proj");
+        VC.show("view-select-proj");
     }
 
 /* Project manipulation handlers */
@@ -151,15 +151,12 @@ class ClickHandler {
 
         //TODO: grab project id, begin rendering
 
-        vc.show("view-db-vis");
+        VC.show("view-db-vis");
     }
 
     static create(e) {
-
-        //TODO: create project from input fields
-        // INCLUDE INPUT VALIDATION
-
-        vc.show("view-select-proj");
+        e.preventDefault();
+        PM.create()
     }
 
     static save(e) {
@@ -167,7 +164,7 @@ class ClickHandler {
         //TODO: create project from input fields
         // INCLUDE INPUT VALIDATION
 
-        vc.show("view-select-proj");
+        VC.show("view-select-proj");
     }
 
     static delete(e) {
@@ -180,45 +177,35 @@ class ClickHandler {
 
         //TODO: whipe input fields
 
-        vc.show("view-select-proj");
+        VC.show("view-select-proj");
     }
 
     static cancelCreate(e) {
 
         //TODO: whipe input fields
 
-        vc.show("view-select-proj");
+        VC.show("view-select-proj");
     }
 
 /* Database Visualization button handlers */
     static grid(e) {
         //TODO: rerender DBVis with this layout
-        console.log("[ERROR] Not yet implemented")
+        console.log("[WARN] Not yet implemented")
     }
 
     static forceDir(e) {
         //TODO: rerender DBVis with this layout
-        console.log("[ERROR] Not yet implemented")
+        console.log("[WARN] Not yet implemented")
     }
 
     static circular(e) {
         //TODO: rerender DBVis with this layout
-        console.log("[ERROR] Not yet implemented")
+        console.log("[WARN] Not yet implemented")
     }
 
     static layered(e) {
         //TODO: rerender DBVis with this layout
-        console.log("[ERROR] Not yet implemented")
+        console.log("[WARN] Not yet implemented")
     }
 
 }
-
-//Initialize View Structure
-var vc = new ViewController();
-vc.init();
-
-//Initialize Click Handlers
-ClickHandler.initStaticHandlers();
-
-//start-up view
-vc.show("view-select-proj");

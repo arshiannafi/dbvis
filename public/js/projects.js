@@ -9,11 +9,11 @@
 *
 *
 **********************************************************/
-function saveProject(projectData, host, callback_success, 
+function saveProject(projectData, host, callback_success,
                       callback_failure) {
-    
+
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
+    xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             if(xmlHttp.responseText == "") {
                 callback_success();
@@ -23,12 +23,12 @@ function saveProject(projectData, host, callback_success,
         } else
             callback_failure();
     }
-    xmlHttp.open("POST", host.concat('/projects/saveProject'), true); // true for asynchronous 
+    xmlHttp.open("POST", host.concat('/projects/saveProject'), true); // true for asynchronous
     console.log("Saving: " + JSON.stringify(projectData));
     xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlHttp.send(JSON.stringify(projectData));
-    
-    
+
+
 }
 
 /**********************************************************
@@ -41,15 +41,15 @@ function saveProject(projectData, host, callback_success,
 *
 **********************************************************/
 function getAllProjects(host, callback_success, callback_failure) {
-    
+
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
+    xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback_success(JSON.parse(xmlHttp.responseText));
         else
             callback_failure();
     }
-    xmlHttp.open("GET", host.concat('/projects/getAllProjects'), true); // true for asynchronous 
+    xmlHttp.open("GET", host.concat('/projects/getAllProjects'), true); // true for asynchronous
     xmlHttp.send();
 }
 
@@ -64,19 +64,134 @@ function getAllProjects(host, callback_success, callback_failure) {
 *
 **********************************************************/
 function getProject(projectName, host, callback_success, callback_failure) {
-    
+
     var projecData = [];
     projectData.name = projectName;
-    
+
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
+    xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback_success(JSON.parse(xmlHttp.responseText));
         else
             callback_failure();
     }
-    
-    xmlHttp.open("POST", host.concat('/projects/getProject'), true); // true for asynchronous 
+
+    xmlHttp.open("POST", host.concat('/projects/getProject'), true); // true for asynchronous
     xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlHttp.send(JSON.stringify(projectData));
+}
+
+class ProjectManager {
+
+    constructor() {
+        this.projects = [];
+        this.activeProj = null;
+        this.host = "//localhost:3000";
+    }
+
+    __getProjIndex(name) {
+        return this.projects.find(
+            function(proj){
+                proj.name === name;
+            });
+    }
+
+    __populateList() {
+
+        var that = this;
+
+        $("#project-list").empty();
+
+        this.projects.forEach(
+            function(project){
+                var elementProj = $(document.createElement("div")).addClass("project");
+                var elementName = $(document.createElement("div")).addClass("project-name").text(project.name);
+                var elementIP   = $(document.createElement("div")).addClass("project-address").text(project.IPaddress);
+                elementProj.append(elementName, elementIP);
+                $("#project-list").append(elementProj);
+
+                elementProj.click(
+                    function(e){
+
+                        /* This anonuymous function triggers when a project in the
+                         * project list is clicked, making it both visually, and
+                         * functionally, the active project.
+                         */
+
+                        that.activeProj = project;
+                        $(".project").removeClass("project-active");
+                        $(e.currentTarget).addClass("project-active");
+
+                    });
+            });
+
+    }
+
+    load() {
+        console.log('[INFO] PM.load called');
+        var that = this;
+
+        getAllProjects(this.host,
+            function(json){
+                that.projects = json;
+                console.log("[INFO] Projects loaded successfully");
+                that.__populateList();
+                VC.show("view-select-proj");
+            },
+            function(){
+                console.log("[ERROR] Failed to load projects");
+            });
+    }
+
+    create() {
+
+        var that = this;
+
+        //TODO: add input validation here
+
+        var json = {
+            name:       $("#create-form input[name^='projectName']").val(),
+            IPaddress:  $("#create-form input[name^='address']").val(),
+            db:         $("#create-form input[name^='database']").val(),
+            username:   $("#create-form input[name^='username']").val(),
+            password:   $("#create-form input[name^='password']").val()
+        }
+
+        saveProject(json, this.host,
+            function() {
+                console.log("[INFO] Project saved");
+                that.load();
+            },
+            function() {
+                console.log("[ERROR] Failed to save project");
+            });
+    }
+
+    edit(name, json, cb) {
+
+        var that = this;
+
+        //Save project to server
+        saveProject(json, this.host,
+            function(){
+
+                //TODO: Delete Project by name using Michael's delete function
+                // Reload list as part of callback
+                console.log("[WARN] ProjectManager.edit not yet implemented");
+                that.load();
+
+            },
+            function() {
+                console.log("[ERROR] Failed to save project");
+            });
+
+    }
+
+    delete(name, cb) {
+
+        //TODO: Delete Project by name using Michael's delete function
+        // Reload list as part of callback
+
+    }
+
 }
