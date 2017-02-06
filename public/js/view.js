@@ -184,14 +184,14 @@ class ClickHandler {
     }
 
     static cancelEdit(e) {
-
+        e.preventDefault();
         //TODO: whipe input fields
 
         VC.show("view-select-proj");
     }
 
     static cancelCreate(e) {
-
+        e.preventDefault();
         //TODO: whipe input fields
 
         VC.show("view-select-proj");
