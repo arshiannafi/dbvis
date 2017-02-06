@@ -132,7 +132,7 @@ class ProjectManager {
             function(project){
                 var elementProj = $(document.createElement("div")).addClass("project");
                 var elementName = $(document.createElement("div")).addClass("project-name").text(project.name);
-                var elementIP   = $(document.createElement("div")).addClass("project-address").text(project.IPaddress);
+                var elementIP   = $(document.createElement("div")).addClass("project-address").text(project.IPaddress + ":" + project.port);
                 elementProj.append(elementName, elementIP);
                 $("#project-list").append(elementProj);
 
