@@ -227,6 +227,8 @@ class ProjectManager {
                         function(){
                             console.log("[ERROR] Failed to delete project: " + that.activeProj.name);
                         });
+                } else {
+                    that.load();
                 }
 
 
