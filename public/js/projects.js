@@ -153,6 +153,10 @@ class ProjectManager {
 
     }
 
+    open() {
+        visualizeSchema(this.activeProj);
+    }
+
     load() {
         console.log('[INFO] PM.load called');
         var that = this;

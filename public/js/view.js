@@ -157,8 +157,8 @@ class ClickHandler {
 
 /* Project manipulation handlers */
     static open(e) {
-
-        //TODO: grab project id, begin rendering
+        e.preventDefault();
+        PM.open();
 
         VC.show("view-db-vis");
     }
