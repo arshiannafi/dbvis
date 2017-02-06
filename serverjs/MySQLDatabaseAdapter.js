@@ -30,9 +30,9 @@ module.exports = function(app) {
      *
      * @param {string} queryString
      * @param {function} callback_success
-     * @param {function} callback_faileure
+     * @param {function} callback_failure
      */
-    function query(dbParams, queryString, callback_success, callback_faileure) {
+    function query(dbParams, queryString, callback_success, callback_failure) {
 
         // MySQL library
         var mysql = require('mysql');
@@ -46,7 +46,7 @@ module.exports = function(app) {
             if (err) {
                 // Error
                 console.error('error connecting: ' + err.stack);
-                callback_faileure(err.code);
+                callback_failure(err.code);
             } else {
                 // Success
                 callback_success(rows);
@@ -66,15 +66,15 @@ module.exports = function(app) {
         var dbParams = req.body; // getting db data out of request params
 
         // SQL query string
-        var queryString = 'select distinct TABLE_SCHEMA from information_schema.columns';
+        var queryString = 'select distinct table_schema from information_schema.columns';
 
         // Success callback function
         var callback_success = function(data) {
             res.json(data); // Respond with the data
         };
 
-        // Faileure callback function
-        var callback_faileure = function(errMsg) {
+        // failure callback function
+        var callback_failure = function(errMsg) {
             res.status(400); // Setting HTTP status to Error
             res.json({
                 'error': errMsg
@@ -82,7 +82,7 @@ module.exports = function(app) {
         };
 
         // Executing the query
-        query(dbParams, queryString, callback_success, callback_faileure);
+        query(dbParams, queryString, callback_success, callback_failure);
 
     });
 
@@ -95,18 +95,17 @@ module.exports = function(app) {
         var dbParams = req.body; // getting db data out of request params
 
         // SQL query string
-        var queryString = 'select TABLE_NAME, COLUMN_NAME, ORDINAL_POSITION, COLUMN_KEY' +
+        var queryString = 'select table_name, column_name, ordinal_position, column_key' +
             ' from information_schema.columns' +
-            ' where table_schema = "' + dbParams.database + '"' +
-            ' order by table_name,ordinal_position';
+            ' where table_schema = "' + dbParams.database + '"';
 
         // Success callback function
         var callback_success = function(data) {
             res.json(data); // Respond with the data
         };
 
-        // Faileure callback function
-        var callback_faileure = function(errMsg) {
+        // failure callback function
+        var callback_failure = function(errMsg) {
             res.status(400); // Setting HTTP status to Error
             res.json({
                 'error': errMsg
@@ -114,9 +113,36 @@ module.exports = function(app) {
         };
 
         // Executing the query
-        query(dbParams, queryString, callback_success, callback_faileure);
+        query(dbParams, queryString, callback_success, callback_failure);
 
     });
 
+    app.post('/sqldb/fetchTableLinks', function(req, res) {
+
+        var dbParams = req.body; // getting db data out of request params
+
+        // SQL query string
+        var queryString = 'select table_name, column_name, referenced_table_name, referenced_column_name' +
+            ' from information_schema.key_column_usage' +
+            ' where constraint_schema = "' + dbParams.database + '"' +
+            ' and referenced_table_name is not null';
+
+        // Success callback function
+        var callback_success = function(data) {
+            res.json(data); // Respond with the data
+        };
+
+        // failure callback function
+        var callback_failure = function(errMsg) {
+            res.status(400); // Setting HTTP status to Error
+            res.json({
+                'error': errMsg
+            }); // responding with a message
+        };
+
+        // Executing the query
+        query(dbParams, queryString, callback_success, callback_failure);
+
+    });
 
 };
