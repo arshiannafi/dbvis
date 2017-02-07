@@ -111,6 +111,7 @@ function visualizeSchema(project) {
             // Add entity
             nodes.push({
                 'key': k, // table name
+                'visible': true,
                 'items': dictionary_tables[k].cols, // cols of the table
             });
         }
@@ -130,6 +131,7 @@ function visualizeSchema(project) {
             }
 
             links.push({
+                'visible': true,
                 'from': data[d].table_name,
                 'to': data[d].referenced_table_name,
                 'text': __relationText_from,
@@ -152,6 +154,7 @@ function visualizeSchema(project) {
  */
 function render(nodeDataArray, linkDataArray) {
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+    makeList();
 }
 
 /**
@@ -218,7 +221,9 @@ function initDiagramCanvas() {
                 isShadowed: true,
                 shadowColor: "#C5C1AA"
             },
+            new go.Binding("keyForButton", "key"),
             new go.Binding("location", "location").makeTwoWay(),
+            new go.Binding("visible", "visible").makeTwoWay(),
             // define the node's outer shape, which will surround the Table
             $(go.Shape, "Rectangle", {
                 fill: 'white',
@@ -247,6 +252,16 @@ function initDiagramCanvas() {
                         row: 0,
                         alignment: go.Spot.TopRight
                     }),
+                $("Button",
+                    { row: 1,
+                        alignment: go.Spot.TopRight,
+                        click: expand },
+                    $(go.TextBlock, "+")),
+                $("Button",
+                    { row: 2,
+                        alignment: go.Spot.TopRight,
+                        click: toggleVisibility },
+                    $(go.TextBlock, "-")),
                 // the list of Panels, each showing an attribute
                 $(go.Panel, "Vertical", {
                         name: "LIST",
@@ -271,6 +286,7 @@ function initDiagramCanvas() {
                 corner: 5,
                 curve: go.Link.JumpOver
             },
+            new go.Binding("visible","visible"),
             $(go.Shape, // the link shape
                 {
                     stroke: "#303B45",
@@ -297,4 +313,43 @@ function initDiagramCanvas() {
                 },
                 new go.Binding("text", "toText"))
         );
+}
+
+function toggleVisibility(e, obj) {
+    var node = obj.part;
+    node.diagram.startTransaction("visible");
+    node.visible = !node.visible;
+    node.diagram.commitTransaction("visible");
+}
+
+function expand(e, obj) {
+    var node = obj.part;
+    node.diagram.startTransaction("expand");
+    var iterator = node.findLinksConnected();
+    while(iterator.next()) {
+        var link = iterator.value;
+        link.getOtherNode(node).visible = true;
+    }
+        
+    node.diagram.commitTransaction("expand");
+}
+
+function makeList() {
+    
+    var it = myDiagram.nodes;
+    var list = $('#entity-list');
+    
+    while(it.next()) {
+        var node = it.value;
+        buttonEventHandler = expand
+        console.log(node);
+        var button = $(document.createElement('button')).text(node.keyForButton).addClass('btn', 'visibility-btn').click(function(e){
+            
+            toggleVisibility(e, node);
+        });
+        
+        list.append(button);
+        
+        
+    }
 }
