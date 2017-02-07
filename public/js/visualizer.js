@@ -17,7 +17,7 @@
 
 // Global variables
 var myDiagram;
-var dictionary_cols = []
+var dictionary_cols = [];
 var dictionary_tables = [];
 var nodes = [];
 var links = [];
@@ -31,6 +31,8 @@ initDiagramCanvas(1);
 // When window loads
 function visualizeSchema(project) {
 
+    dictionary_cols = [];
+    dictionary_tables = [];
     nodes = [];
     links = [];
 
