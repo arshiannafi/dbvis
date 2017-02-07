@@ -158,6 +158,11 @@ h4 {
     margin: 15px;
 }
 
+.btn-export {
+    height: 50px;
+    width: 40%;
+}
+
 .btn-layout {
     height: 75px;
     width: 75px;
