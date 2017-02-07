@@ -151,10 +151,6 @@ function visualizeSchema(project) {
  * @param {Array} linkDataArray
  */
 function render(nodeDataArray, linkDataArray) {
-
-    console.log(nodeDataArray);
-    console.log(linkDataArray);
-
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
 }
 
