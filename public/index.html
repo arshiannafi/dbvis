@@ -16,7 +16,7 @@
 
                 <!-- TODO: Make Header Pretty -->
 
-            <span>Database Visualizer</span>
+            <h1>BAMO</h1><h4>Database Schema Visualizer</h4>
         </div>
     </div>
 
@@ -88,29 +88,27 @@
 
             <!-- TODO: Make the sidebar pretty -->
 
-            <button id="back-btn" class="btn">Back</button>
+            <button id="back-btn" class="btn btn-back"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span><span>Back</span></button>
 
             <div class="layout-btns">
                 <div>
-                    <span>Layouts</span>
+                    <h3>Layouts</h3>
                 </div>
-                <div>
-                    <button id="grid-btn" class="btn">Grid</button>
-                    <button id="force-dir-btn" class="btn">Force Directed</button>
-                    <button id="circ-btn" class="btn">Circular</button>
-                    <button id="layered-btn" class="btn">Layered</button>
+                <div class="layout-btn-container">
+                    <button id="grid-btn" class="btn btn-layout">Grid</button>
+                    <button id="force-dir-btn" class="btn btn-layout">Force<br>Directed</button>
+                    <button id="circ-btn" class="btn btn-layout">Circular</button>
+                    <button id="layered-btn" class="btn btn-layout">Layered</button>
                 </div>
             </div>
 
-            <div class="entities-tree">
-                <div>
-                    <span>Entities</span>
-                </div>
-                <div id="entity-list">
+            <div>
+                <h3>Entities</h3>
+            </div>
+            <div id="entity-list" class="entity-list border">
 
-                    <!-- TODO: add checkboxes here for entity hiding/showing -->
+                <!-- TODO: add checkboxes here for entity hiding/showing -->
 
-                </div>
             </div>
 
         </div>

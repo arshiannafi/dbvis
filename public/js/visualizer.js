@@ -31,6 +31,9 @@ initDiagramCanvas(1);
 // When window loads
 function visualizeSchema(project) {
 
+    nodes = [];
+    links = [];
+
     // AJAX 1 - Fetfhing database details (all column information)
     var ajax_fetchDatabaseDetails = $.ajax({
         url: 'http://localhost:3000/sqldb/fetchDatabaseDetails',
@@ -364,28 +367,30 @@ function expand(e, obj) {
         var link = iterator.value;
         link.getOtherNode(node).visible = true;
     }
-        
+
     node.diagram.commitTransaction("expand");
 }
 
 function makeList() {
-    
+
     var it = myDiagram.nodes;
     var list = $('#entity-list');
     list.empty();
     while(it.next()) {
         var node = it.value;
-        var button = $(document.createElement('button')).text(node.keyForButton).addClass('btn', 'visibility-btn');
+        var button = $(document.createElement('button')).text(node.keyForButton)
+            .addClass('btn')
+            .addClass('btn-visibility');
         setHandler(node, button);
         list.append(button);
-        
-        
+
+
     }
 }
 
 function setHandler(node, button) {
     button.click(function(e){
-            
+
             toggleVisibility(e, node);
     });
 }
