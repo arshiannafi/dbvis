@@ -31,28 +31,41 @@ module.exports = {
      * @param {function} callback_failure: returns the error
      */
     createProject: function(projectParams, callback_success, callback_failure) {
-        // Create file name
-        if(projectParams.name === undefined) {
-            callback_failure('Project does not have a name.');
-            return;
+        
+        var createProjects = function() {
+            
+            // Create file name
+            if(projectParams.name === undefined) {
+                callback_failure('Project does not have a name.');
+                return;
+            }
+
+            // appened json to filename to specify that it's a json file
+            var filename = projectParams.name.concat('.json');
+
+            // Write to file
+            fileSystem.writeFile('./Projects/'.concat(filename), JSON.stringify(projectParams) , 'utf-8', function(err) {
+                // if error...
+                if(err) {
+                    // send error back
+                    callback_failure(err);
+                } else {
+                    // Success!
+                    console.log('Saved project: '.concat(projectParams.name));
+                    callback_success();
+                }
+
+            });
+        };
+        
+        if(!fileSystem.existsSync("./Projects")) {
+            fileSystem.mkdir("./Projects", function() {
+                createProjects();
+            });
+        } else {
+            createProjects();
         }
         
-        // appened json to filename to specify that it's a json file
-        var filename = projectParams.name.concat('.json');
-        
-        // Write to file
-        fileSystem.writeFile('./Projects/'.concat(filename), JSON.stringify(projectParams) , 'utf-8', function(err) {
-            // if error...
-            if(err) {
-                // send error back
-                callback_failure(err);
-            } else {
-                // Success!
-                console.log('Saved project: '.concat(projectParams.name));
-                callback_success();
-            }
-                
-        });
     },
     
     /**
@@ -158,5 +171,5 @@ module.exports = {
                 return;
             }
         });
-    }
+    },
 }
