@@ -110,6 +110,7 @@ class ClickHandler {
 
         //DBVis View
         $("#back-btn").click(this.back);
+        $("#exportImage-btn").click(this.exportImage);
         $("#grid-btn").click(this.grid);
         $("#force-dir-btn").click(this.forceDir);
         $("#circ-btn").click(this.circular);
@@ -149,6 +150,12 @@ class ClickHandler {
 
     static back() {
         VC.show("view-select-proj");
+    }
+
+    static exportImage() {
+        // downloadImage function exist in visualizer.js
+        // visualizer.js must be loaded before this 
+        downloadImage();
     }
 
 /* Project manipulation handlers */
