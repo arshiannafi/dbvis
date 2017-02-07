@@ -37,9 +37,9 @@ function visualizeSchema(project) {
         dataType: 'json',
         contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify({
-            host: project.host,
+            host: project.IPaddress,
             port: project.port,
-            user: project.user,
+            user: project.username,
             password: project.password,
             database: project.db
         })
@@ -52,9 +52,9 @@ function visualizeSchema(project) {
         dataType: 'json',
         contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify({
-            host: project.host,
+            host: project.IPaddress,
             port: project.port,
-            user: project.user,
+            user: project.username,
             password: project.password,
             database: project.db
         })
@@ -172,8 +172,8 @@ function downloadImage() {
  */
 function getRelatedTables(tableName) {
     var relatedTables = [];
-    for (var i in links){
-        if (links[i].from === tableName){
+    for (var i in links) {
+        if (links[i].from === tableName) {
             relatedTables.push(links[i].to);
         }
     }
