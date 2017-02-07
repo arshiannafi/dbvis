@@ -11,9 +11,9 @@
  */
 var fileSystem = require('fs');
 module.exports = {
-    
-    
-    
+
+
+
     /**
      * This function creates a project and saves the data
      *
@@ -31,9 +31,10 @@ module.exports = {
      * @param {function} callback_failure: returns the error
      */
     createProject: function(projectParams, callback_success, callback_failure) {
-        
+// <<<<<<< HEAD
+
         var createProjects = function() {
-            
+
             // Create file name
             if(projectParams.name === undefined) {
                 callback_failure('Project does not have a name.');
@@ -57,7 +58,7 @@ module.exports = {
 
             });
         };
-        
+
         if(!fileSystem.existsSync("./Projects")) {
             fileSystem.mkdir("./Projects", function() {
                 createProjects();
@@ -65,9 +66,8 @@ module.exports = {
         } else {
             createProjects();
         }
-        
     },
-    
+
     /**
      * This function gets all of the projects
      *
@@ -86,7 +86,7 @@ module.exports = {
                 if(files.length == 0) {
                     callback_success(projects);
                 }
-                
+
                 var filesDone = 0;
                 files.forEach(function(listItem, index) {
                     module.exports.getProjectInfo(listItem.replace('.json', ''), function(project) {
@@ -98,7 +98,7 @@ module.exports = {
                         }
                     }, function(err) {
                         console.log('Could not load project: ' + listItem + ' because of error:' + err);
-                        filesDone = filesDone + 1; 
+                        filesDone = filesDone + 1;
                         if(filesDone == files.length) {
                             callback_success(projects);
                             return;
@@ -108,7 +108,7 @@ module.exports = {
            }
         });
     },
-    
+
     /**
      * This function gets all of the projects
      *
@@ -117,27 +117,27 @@ module.exports = {
      * @param {function} callback_failure: returns the error
      */
     getProjectInfo: function(name, callback_success, callback_failure) {
-        
+
         // Make sure name is valid
         if(!(typeof name == 'string' || name instanceof String)) {
             callback_failure('Project name is not a string');
             return;
-        }  
-        
+        }
+
         // get project file name
         filename = './Projects/'.concat(name.concat('.json')); // may want to sanatize inputs
-        
+
         // Read the file using file system
-        fileSystem.readFile(filename, (err, data) => {
+        fileSystem.readFile(filename, function (err, data) {
             // Check if there's an error
             if (err) {
                 // Log the error
                 console.log('Could not get project: '.concat(name));
                 console.log(err);
                 // Callback the error
-                callback_failure(err); 
+                callback_failure(err);
             } else {
-                
+
                 try{
                     // Try parsing the data
                     project = JSON.parse(data);
@@ -153,14 +153,14 @@ module.exports = {
             }
         });
     },
-    
+
     deleteProject: function(name, callback_success, callback_failure) {
-        
+
         if(!(typeof name == 'string' || name instanceof String)) {
             callback_failure('Provided name is invalid');
             return;
         }
-        
+
         filename = './Projects/'.concat(name.concat('.json'));
         fileSystem.unlink(filename, function(err) {
             if(err) {
@@ -171,5 +171,5 @@ module.exports = {
                 return;
             }
         });
-    },
+    }
 }

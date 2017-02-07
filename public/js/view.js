@@ -110,6 +110,7 @@ class ClickHandler {
 
         //DBVis View
         $("#back-btn").click(this.back);
+        $("#exportImage-btn").click(this.exportImage);
         $("#grid-btn").click(this.grid);
         $("#force-dir-btn").click(this.forceDir);
         $("#circ-btn").click(this.circular);
@@ -123,14 +124,10 @@ class ClickHandler {
 
 /* View switching handlers */
     static showHome(e) {
-
         VC.show("view-home");
     }
 
     static showSelect(e) {
-
-        //TODO: Render list of available projects
-
         VC.show("view-select-proj");
     }
 
@@ -155,12 +152,25 @@ class ClickHandler {
         VC.show("view-select-proj");
     }
 
+    static exportImage() {
+        // downloadImage function exist in visualizer.js
+        // visualizer.js must be loaded before this 
+        downloadImage();
+    }
+
 /* Project manipulation handlers */
     static open(e) {
-        e.preventDefault();
-        PM.open();
 
-        VC.show("view-db-vis");
+        e.preventDefault();
+        if(PM.activeProj) {
+            PM.open();
+            VC.show("view-db-vis");
+        } else {
+            console.log("[ERROR] No project selected");
+            //TODO: Display Error message to screen explaining that no project
+            // was selected
+        }
+
     }
 
     static create(e) {
@@ -171,51 +181,68 @@ class ClickHandler {
     static save(e) {
         e.preventDefault();
         PM.edit();
-        //TODO: create project from input fields
-        // INCLUDE INPUT VALIDATION
+        //TODO: INCLUDE INPUT VALIDATION
 
         VC.show("view-select-proj");
     }
 
     static delete(e) {
         PM.delete();
-        //TODO: Delete currently selected project
-
     }
 
     static cancelEdit(e) {
         e.preventDefault();
-        //TODO: whipe input fields
-
         VC.show("view-select-proj");
     }
 
     static cancelCreate(e) {
         e.preventDefault();
-        //TODO: whipe input fields
-
         VC.show("view-select-proj");
     }
 
 /* Database Visualization button handlers */
     static grid(e) {
-        //TODO: rerender DBVis with this layout
-        console.log("[WARN] Not yet implemented")
+        e.preventDefault();
+        if(nodes && links) {
+            initDiagramCanvas(1);
+            render(nodes, links);
+        }
+        else {
+            console.log("[ERROR] schema data not present");
+        }
     }
 
     static forceDir(e) {
-        //TODO: rerender DBVis with this layout
-        console.log("[WARN] Not yet implemented")
+        e.preventDefault();
+        if(nodes && links) {
+            initDiagramCanvas(2);
+            render(nodes, links);
+        }
+        else {
+            console.log("[ERROR] schema data not present");
+        }
     }
 
     static circular(e) {
-        //TODO: rerender DBVis with this layout
-        console.log("[WARN] Not yet implemented")
+        e.preventDefault();
+        if(nodes && links) {
+            initDiagramCanvas(3);
+            render(nodes, links);
+        }
+        else {
+            console.log("[ERROR] schema data not present");
+        }
     }
 
     static layered(e) {
-        //TODO: rerender DBVis with this layout
-        console.log("[WARN] Not yet implemented")
+        e.preventDefault();
+        if(nodes && links) {
+            initDiagramCanvas(4);
+            render(nodes, links);
+        }
+        else {
+            console.log("[ERROR] schema data not present");
+        }
     }
 
 }
