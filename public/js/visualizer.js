@@ -16,6 +16,7 @@
 
 
 // Global variables
+var myDiagram;
 var dictionary_cols = []
 var dictionary_tables = [];
 var nodes = [];
@@ -25,7 +26,7 @@ var __relationText_to = '1';
 // End of globar variables
 
 // Init canvas
-initDiagramCanvas();
+initDiagramCanvas(1);
 
 // When window loads
 function visualizeSchema(project) {
@@ -111,6 +112,7 @@ function visualizeSchema(project) {
             // Add entity
             nodes.push({
                 'key': k, // table name
+                'visible': true,
                 'items': dictionary_tables[k].cols, // cols of the table
             });
         }
@@ -130,6 +132,7 @@ function visualizeSchema(project) {
             }
 
             links.push({
+                'visible': true,
                 'from': data[d].table_name,
                 'to': data[d].referenced_table_name,
                 'text': __relationText_from,
@@ -147,11 +150,12 @@ function visualizeSchema(project) {
 /**
  * This function renders/re-renders the given set of nodes and links.
  *
- * @param {Array} nodeDataArray
- * @param {Array} linkDataArray
+ * $$param {Array} nodeDataArray
+ * $$param {Array} linkDataArray
  */
 function render(nodeDataArray, linkDataArray) {
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+    makeList();
 }
 
 /**
@@ -167,8 +171,8 @@ function downloadImage() {
  * Given a table name, this function returns all related tables.
  * Returns only outgoing edges.
  *
- * @param {String} tableName - The name of the table
- * @returns {Array} List of related tables
+ * $$param {String} tableName - The name of the table
+ * $$returns {Array} List of related tables
  */
 function getRelatedTables(tableName) {
     var relatedTables = [];
@@ -180,27 +184,59 @@ function getRelatedTables(tableName) {
     return relatedTables;
 }
 
-function initDiagramCanvas() {
+/**
+ * Initializes the diagram based on the selected layout
+ *
+ * $$param {Number} layoutID - The name of the table
+ * Values:
+ *  1 = Grid
+ *  2 = Force Directed
+ *  3 = Circular
+ *  4 = Layered
+ */
+function initDiagramCanvas(layoutID) {
+
+    var $$ = go.GraphObject.make; // for conciseness in defining templates
+
+    //dissociates the diagram from the div, necessary for rerendering
+    if(myDiagram !== undefined && myDiagram.div !== null) {
+        myDiagram.div = null;
+    }
+
+    var layout;
+
+    if(layoutID === 1) {
+        layout = $$(go.GridLayout);
+    }
+    else if(layoutID === 2) {
+        layout = $$(go.ForceDirectedLayout);
+    }
+    else if(layoutID === 3) {
+        layout = $$(go.CircularLayout);
+    }
+    else if(layoutID === 4) {
+        layout = $$(go.LayeredDigraphLayout);
+    }
+
     // if (window.goSamples) goSamples(); // init for these samples -- you don't need to call this
-    var $ = go.GraphObject.make; // for conciseness in defining templates
     myDiagram =
-        $(go.Diagram, "myDiagramDiv", // must name or refer to the DIV HTML element
+        $$(go.Diagram, "myDiagramDiv", // must name or refer to the DIV HTML element
             {
                 initialContentAlignment: go.Spot.Center,
                 allowDelete: false,
                 allowCopy: false,
-                layout: $(go.ForceDirectedLayout),
+                layout: layout,
                 "undoManager.isEnabled": true
             });
     // the template for each attribute in a node's array of item data
     var itemTempl =
-        $(go.Panel, "Horizontal",
-            $(go.Shape, {
+        $$(go.Panel, "Horizontal",
+            $$(go.Shape, {
                     desiredSize: new go.Size(10, 10)
                 },
                 new go.Binding("figure", "figure"),
                 new go.Binding("fill", "color")),
-            $(go.TextBlock, {
+            $$(go.TextBlock, {
                     stroke: "#333333",
                     font: "bold 14px sans-serif"
                 },
@@ -208,7 +244,7 @@ function initDiagramCanvas() {
         );
     // define the Node template, representing an entity
     myDiagram.nodeTemplate =
-        $(go.Node, "Auto", // the whole node panel
+        $$(go.Node, "Auto", // the whole node panel
             {
                 selectionAdorned: true,
                 resizable: true,
@@ -218,23 +254,25 @@ function initDiagramCanvas() {
                 isShadowed: true,
                 shadowColor: "#C5C1AA"
             },
+            new go.Binding("keyForButton", "key"),
             new go.Binding("location", "location").makeTwoWay(),
+            new go.Binding("visible", "visible").makeTwoWay(),
             // define the node's outer shape, which will surround the Table
-            $(go.Shape, "Rectangle", {
+            $$(go.Shape, "Rectangle", {
                 fill: 'white',
                 stroke: "#756875",
                 strokeWidth: 3
             }),
-            $(go.Panel, "Table", {
+            $$(go.Panel, "Table", {
                     margin: 8,
                     stretch: go.GraphObject.Fill
                 },
-                $(go.RowColumnDefinition, {
+                $$(go.RowColumnDefinition, {
                     row: 0,
                     sizing: go.RowColumnDefinition.None
                 }),
                 // the table header
-                $(go.TextBlock, {
+                $$(go.TextBlock, {
                         row: 0,
                         alignment: go.Spot.Center,
                         margin: new go.Margin(0, 14, 0, 2), // leave room for Button
@@ -242,13 +280,23 @@ function initDiagramCanvas() {
                     },
                     new go.Binding("text", "key")),
                 // the collapse/expand button
-                $("PanelExpanderButton", "LIST", // the name of the element whose visibility this button toggles
+                $$("PanelExpanderButton", "LIST", // the name of the element whose visibility this button toggles
                     {
                         row: 0,
                         alignment: go.Spot.TopRight
                     }),
+                $$("Button",
+                    { row: 1,
+                        alignment: go.Spot.TopRight,
+                        click: expand },
+                    $$(go.TextBlock, "+")),
+                $$("Button",
+                    { row: 2,
+                        alignment: go.Spot.TopRight,
+                        click: toggleVisibility },
+                    $$(go.TextBlock, "-")),
                 // the list of Panels, each showing an attribute
-                $(go.Panel, "Vertical", {
+                $$(go.Panel, "Vertical", {
                         name: "LIST",
                         row: 1,
                         padding: 3,
@@ -262,7 +310,7 @@ function initDiagramCanvas() {
         ); // end Node
     // define the Link template, representing a relationship
     myDiagram.linkTemplate =
-        $(go.Link, // the whole link panel
+        $$(go.Link, // the whole link panel
             {
                 selectionAdorned: true,
                 layerName: "Foreground",
@@ -271,12 +319,14 @@ function initDiagramCanvas() {
                 corner: 5,
                 curve: go.Link.JumpOver
             },
-            $(go.Shape, // the link shape
+
+            new go.Binding("visible","visible"),
+            $$(go.Shape, // the link shape
                 {
                     stroke: "#303B45",
                     strokeWidth: 2.5
                 }),
-            $(go.TextBlock, // the "from" label
+            $$(go.TextBlock, // the "from" label
                 {
                     textAlign: "center",
                     font: "bold 14px sans-serif",
@@ -286,7 +336,7 @@ function initDiagramCanvas() {
                     segmentOrientation: go.Link.OrientUpright
                 },
                 new go.Binding("text", "text")),
-            $(go.TextBlock, // the "to" label
+            $$(go.TextBlock, // the "to" label
                 {
                     textAlign: "center",
                     font: "bold 14px sans-serif",
@@ -297,4 +347,45 @@ function initDiagramCanvas() {
                 },
                 new go.Binding("text", "toText"))
         );
+}
+
+function toggleVisibility(e, obj) {
+    var node = obj.part;
+    node.diagram.startTransaction("visible");
+    node.visible = !node.visible;
+    node.diagram.commitTransaction("visible");
+}
+
+function expand(e, obj) {
+    var node = obj.part;
+    node.diagram.startTransaction("expand");
+    var iterator = node.findLinksConnected();
+    while(iterator.next()) {
+        var link = iterator.value;
+        link.getOtherNode(node).visible = true;
+    }
+        
+    node.diagram.commitTransaction("expand");
+}
+
+function makeList() {
+    
+    var it = myDiagram.nodes;
+    var list = $('#entity-list');
+    list.empty();
+    while(it.next()) {
+        var node = it.value;
+        var button = $(document.createElement('button')).text(node.keyForButton).addClass('btn', 'visibility-btn');
+        setHandler(node, button);
+        list.append(button);
+        
+        
+    }
+}
+
+function setHandler(node, button) {
+    button.click(function(e){
+            
+            toggleVisibility(e, node);
+    });
 }
