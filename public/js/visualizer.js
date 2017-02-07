@@ -166,9 +166,14 @@ function render(nodeDataArray, linkDataArray) {
  * what is visible in the diagram in client's browser
  */
 function downloadImage() {
-    var url = myDiagram.makeImage().src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
-    window.open(url);
+    var link = document.createElement('a');
+    link.download = 'diagram.png';
+    link.href = myDiagram.makeImage().src;
+    link.click();
 }
+
+
+
 
 /**
  * Given a table name, this function returns all related tables.
