@@ -214,7 +214,7 @@ class ProjectManager {
         }
 
         //Save project to server
-        saveProject(json, this.host,
+        saveProjectData(json, this.host,
             function(){
 
                 console.log("[INFO] Project saved");
@@ -242,9 +242,27 @@ class ProjectManager {
             function() {
                 console.log("[ERROR] Failed to save project");
             });
-
     }
 
+    saveProjectData(json) {
+        var data = {
+            name:       this.activeProj.name,
+            IPaddress:  this.activeProj.IPaddress,
+            port:       this.activeProj.port,
+            db:         this.activeProj.db,
+            username:   this.activeProj.username,
+            password:   this.activeProj.password,
+            data:       json,
+        }
+        saveProject(data, this.host,
+            function(){
+                console.log("[INFO] Project saved");
+            },
+            function() {
+                console.log("[ERROR] Failed to save project");
+            });
+    }
+    
     delete() {
 
         var that = this;

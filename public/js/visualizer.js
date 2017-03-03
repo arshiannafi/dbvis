@@ -26,7 +26,7 @@ var __relationText_to = '1';
 // End of globar variables
 
 // Init canvas
-initDiagramCanvas(1);
+initDiagramCanvas(-1);
 
 // When window loads
 function visualizeSchema(project) {
@@ -35,7 +35,26 @@ function visualizeSchema(project) {
     dictionary_tables = [];
     nodes = [];
     links = [];
-
+    
+    if(project.data != undefined) {
+        nodes = project.data.nodeData;
+        links = project.data.linkData;
+        // Set up node data for 
+        for(var i = 0; i < nodes.length; i++) {
+            nodes[i].location = new go.Point(nodes[i].location.J, nodes[i].location.K);
+        }
+        for(var i = 0; i < links.length; i++) {
+            var pointsList = new go.List(go.Point);
+            console.log(links[i]);
+            for(var j = 0; j < links[i].points.o.length; j++) {
+                console.log(links[i].points.o[j]);
+                pointsList.add(new go.Point(links[i].points.o[j].J, links[i].points.o[j].K)); 
+            }
+            links[i].points = pointsList;
+        }
+        render(nodes, links);
+        return;
+    } 
     // AJAX 1 - Fetfhing database details (all column information)
     var ajax_fetchDatabaseDetails = $.ajax({
         url: 'http://localhost:3000/sqldb/fetchDatabaseDetails',
@@ -161,6 +180,26 @@ function visualizeSchema(project) {
 function render(nodeDataArray, linkDataArray) {
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
     makeList();
+    if(nodeDataArray[0].location) {
+        updatePositions(nodeDataArray);
+    }
+}
+
+function updatePositions(nodeDataArray) {
+    
+    var link;
+    myDiagram.startTransaction("moving links");
+    for(var i = 0 ; i < myDiagram.model.linkDataArray.length; i++){
+        data = myDiagram.model.linkDataArray[i]; 
+        link = myDiagram.findLinkForData(data);
+        var linkList = link.points.copy();
+        linkList.clear();
+        for(var j = 0 ; j < data.points.o.length; j++) {
+            linkList.add(data.points.o[j]);
+        }
+        link.points = linkList;
+    }
+    myDiagram.commitTransaction("moving links");
 }
 
 /**
@@ -168,6 +207,7 @@ function render(nodeDataArray, linkDataArray) {
  * what is visible in the diagram in client's browser
  */
 function downloadImage() {
+    saveLayoutInformation();
     var link = document.createElement('a');
     link.download = 'diagram.png';
     link.href = myDiagram.makeImage().src;
@@ -214,7 +254,7 @@ function initDiagramCanvas(layoutID) {
     }
 
     var layout;
-
+    
     if(layoutID === 1) {
         layout = $$(go.GridLayout);
     }
@@ -226,8 +266,11 @@ function initDiagramCanvas(layoutID) {
     }
     else if(layoutID === 4) {
         layout = $$(go.LayeredDigraphLayout);
-    }
+    }  else
+        layout = new go.Layout();
+    
 
+    
     // if (window.goSamples) goSamples(); // init for these samples -- you don't need to call this
     myDiagram =
         $$(go.Diagram, "myDiagramDiv", // must name or refer to the DIV HTML element
@@ -327,9 +370,9 @@ function initDiagramCanvas(layoutID) {
                 reshapable: true,
                 routing: go.Link.AvoidsNodes,
                 corner: 5,
-                curve: go.Link.JumpOver
+                curve: go.Link.JumpOver,
             },
-
+            new go.Binding("points", "points").makeTwoWay(),
             new go.Binding("visible","visible"),
             $$(go.Shape, // the link shape
                 {
@@ -397,7 +440,11 @@ function makeList() {
 
 function setHandler(node, button) {
     button.click(function(e){
-
-            toggleVisibility(e, node);
+        toggleVisibility(e, node);
     });
+}
+
+function saveLayoutInformation() {
+    PM.saveProjectData({nodeData: nodes,
+                        linkData: links});
 }
