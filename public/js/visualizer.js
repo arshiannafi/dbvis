@@ -36,22 +36,22 @@ function visualizeSchema(project) {
     nodes = [];
     links = [];
     
+    // If there the project has already saved data/layout, load it
     if(project.data != undefined) {
         nodes = project.data.nodeData;
         links = project.data.linkData;
-        // Set up node data for 
+        // Using the given data from file, make objects for data binding
         for(var i = 0; i < nodes.length; i++) {
             nodes[i].location = new go.Point(nodes[i].location.J, nodes[i].location.K);
         }
         for(var i = 0; i < links.length; i++) {
             var pointsList = new go.List(go.Point);
-            console.log(links[i]);
             for(var j = 0; j < links[i].points.o.length; j++) {
-                console.log(links[i].points.o[j]);
                 pointsList.add(new go.Point(links[i].points.o[j].J, links[i].points.o[j].K)); 
             }
             links[i].points = pointsList;
         }
+        // Render the data
         render(nodes, links);
         return;
     } 
@@ -180,26 +180,6 @@ function visualizeSchema(project) {
 function render(nodeDataArray, linkDataArray) {
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
     makeList();
-    if(nodeDataArray[0].location) {
-        updatePositions(nodeDataArray);
-    }
-}
-
-function updatePositions(nodeDataArray) {
-    
-    var link;
-    myDiagram.startTransaction("moving links");
-    for(var i = 0 ; i < myDiagram.model.linkDataArray.length; i++){
-        data = myDiagram.model.linkDataArray[i]; 
-        link = myDiagram.findLinkForData(data);
-        var linkList = link.points.copy();
-        linkList.clear();
-        for(var j = 0 ; j < data.points.o.length; j++) {
-            linkList.add(data.points.o[j]);
-        }
-        link.points = linkList;
-    }
-    myDiagram.commitTransaction("moving links");
 }
 
 /**
@@ -207,7 +187,6 @@ function updatePositions(nodeDataArray) {
  * what is visible in the diagram in client's browser
  */
 function downloadImage() {
-    saveLayoutInformation();
     var link = document.createElement('a');
     link.download = 'diagram.png';
     link.href = myDiagram.makeImage().src;
@@ -329,9 +308,10 @@ function initDiagramCanvas(layoutID) {
                         row: 0,
                         alignment: go.Spot.Center,
                         margin: new go.Margin(0, 14, 0, 2), // leave room for Button
-                        font: "bold 16px sans-serif"
+                        font: "bold 16px sans-serif",
+                        editable: true
                     },
-                    new go.Binding("text", "key")),
+                    new go.Binding("text", "key").makeTwoWay()),
                 // the collapse/expand button
                 $$("PanelExpanderButton", "LIST", // the name of the element whose visibility this button toggles
                     {
@@ -379,6 +359,15 @@ function initDiagramCanvas(layoutID) {
                     stroke: "#303B45",
                     strokeWidth: 2.5
                 }),
+            $$(go.TextBlock, "transition",  // the label text
+                {
+                  textAlign: "center",
+                  font: "9pt helvetica, arial, sans-serif",
+                  margin: 4,
+                  editable: true  // enable in-place editing
+                },
+                // editing the text automatically updates the model data
+                new go.Binding("text", "name").makeTwoWay()),
             $$(go.TextBlock, // the "from" label
                 {
                     textAlign: "center",
@@ -402,6 +391,12 @@ function initDiagramCanvas(layoutID) {
         );
 }
 
+/**
+ * Toggle whether or not a node is visible
+ *
+ * $$param {Event} Event of button being clicked
+ * $$param {Object} Button that was clicked
+ */
 function toggleVisibility(e, obj) {
     var node = obj.part;
     node.diagram.startTransaction("visible");
@@ -409,6 +404,12 @@ function toggleVisibility(e, obj) {
     node.diagram.commitTransaction("visible");
 }
 
+/**
+ * Expand out a node to show all related entities
+ *
+ * $$param {Event} Event of button being clicked
+ * $$param {Object} Button that was clicked
+ */
 function expand(e, obj) {
     var node = obj.part;
     node.diagram.startTransaction("expand");
@@ -421,6 +422,10 @@ function expand(e, obj) {
     node.diagram.commitTransaction("expand");
 }
 
+/**
+ * Make a list of all of the entites to toggle whether
+ * they are on or off
+ */
 function makeList() {
 
     var it = myDiagram.nodes;
@@ -438,12 +443,18 @@ function makeList() {
     }
 }
 
+/**
+ * Helper function of makeList
+ */
 function setHandler(node, button) {
     button.click(function(e){
         toggleVisibility(e, node);
     });
 }
 
+/**
+ * Save all of the layout information currently on the screen
+ */
 function saveLayoutInformation() {
     PM.saveProjectData({nodeData: nodes,
                         linkData: links});
