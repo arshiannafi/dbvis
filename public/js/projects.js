@@ -214,7 +214,7 @@ class ProjectManager {
         }
 
         //Save project to server
-        saveProjectData(json, this.host,
+        saveProject(json, this.host,
             function(){
 
                 console.log("[INFO] Project saved");
