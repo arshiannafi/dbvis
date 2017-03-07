@@ -115,6 +115,7 @@ class ClickHandler {
         $("#force-dir-btn").click(this.forceDir);
         $("#circ-btn").click(this.circular);
         $("#layered-btn").click(this.layered);
+        $("#save-layout-btn").click(this.saveLayout);
 
     }
 
@@ -152,9 +153,14 @@ class ClickHandler {
         VC.show("view-select-proj");
     }
 
+    static saveLayout(e) {
+        e.preventDefault();
+        saveLayoutInformation();
+    }
+
     static exportImage() {
         // downloadImage function exist in visualizer.js
-        // visualizer.js must be loaded before this 
+        // visualizer.js must be loaded before this
         downloadImage();
     }
 

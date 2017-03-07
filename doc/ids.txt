@@ -21,6 +21,7 @@ grid-btn
 force-dir-btn
 circ-btn
 layered-btn
+save-layout-btn
 
 Forms:
 create-form
