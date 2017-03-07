@@ -10,6 +10,8 @@ class ViewController {
         this.add(new View("view-select-proj", 1, "view-home"));
         this.add(new View("view-create-proj", 1, "view-home"));
         this.add(new View("view-edit-proj", 1, "view-home"));
+        this.add(new View("visualization", 2, "view-db-vis"));
+        this.add(new View("drilldown-vis", 2, "view-db-vis"));
     }
 
     add(v) {
@@ -154,7 +156,7 @@ class ClickHandler {
 
     static exportImage() {
         // downloadImage function exist in visualizer.js
-        // visualizer.js must be loaded before this 
+        // visualizer.js must be loaded before this
         downloadImage();
     }
 
@@ -164,7 +166,7 @@ class ClickHandler {
         e.preventDefault();
         if(PM.activeProj) {
             PM.open();
-            VC.show("view-db-vis");
+            VC.show("visualization");
         } else {
             console.log("[ERROR] No project selected");
             //TODO: Display Error message to screen explaining that no project
