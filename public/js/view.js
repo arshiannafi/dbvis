@@ -117,6 +117,7 @@ class ClickHandler {
         $("#force-dir-btn").click(this.forceDir);
         $("#circ-btn").click(this.circular);
         $("#layered-btn").click(this.layered);
+        $("#drill-up-btn").click(this.drillUp);
 
     }
 
@@ -152,6 +153,14 @@ class ClickHandler {
 
     static back() {
         VC.show("view-select-proj");
+    }
+
+    static drillUp() {
+        VC.show("visualization");
+    }
+
+    static drillDown() {
+        VC.show("drilldown-vis");
     }
 
     static exportImage() {
