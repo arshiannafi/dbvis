@@ -88,11 +88,13 @@
 
             <!-- TODO: Make the sidebar pretty -->
 
-            <button id="back-btn" class="btn btn-back"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span><span>Back</span></button>
+            <button id="back-btn" class="btn btn-back"><span class="glyphicon glyphicons-arrow-left" aria-hidden="true"></span><span>Exit Project</span></button>
 
             <button id="exportImage-btn" class="btn btn-export">Export<br>Image</button>
 
             <button id="save-layout-btn" class="btn btn-back">Save<br>Project</button>
+
+            <button id="drill-up-btn" class="btn btn-export"><span class="glyphicon glyphicons-arrow-up" aria-hidden="true"></span><span>Drill Up</span></button>
 
             <div class="layout-btns">
                 <div>
@@ -119,6 +121,10 @@
 
         <div id="visualization" class="right-fill">
             <div id="myDiagramDiv" style="background-color: white; border: solid 1px black; width: 100%; height: 700px"></div>
+        </div>
+
+        <div id="drilldown-vis" class="right-fill">
+            <div id="myDrilldownDiv" style="background-color: white; border: solid 1px black; width: 100%; height: 700px"></div>
         </div>
 
     </div>

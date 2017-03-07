@@ -6,6 +6,8 @@ view-db-vis
 view-select-proj
 view-create-proj
 view-edit-proj
+visualization
+drilldown-vis
 
 Buttons:
 new-proj-btn
@@ -22,6 +24,7 @@ force-dir-btn
 circ-btn
 layered-btn
 save-layout-btn
+drill-up-btn
 
 Forms:
 create-form

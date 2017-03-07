@@ -4,6 +4,7 @@
  *      render()
  *      downloadImage()
  *      getRelatedTables()
+ *      cluster()
  *
  * Usage:
  *   To render a diagram:
@@ -19,6 +20,18 @@
 var myDiagram;
 var dictionary_cols = [];
 var dictionary_tables = [];
+
+/**
+ * Abstract Entity (AE) and Abstract Relation (AR) data structure property:
+ * AR[x] relates AE[2x] and AE[2x+1]
+ *
+ *    +--------+     ^      +----------+
+ *   | AE[2r] |---< AR >---| AE[2r+1] |
+ *  +--------+      v     +----------+
+ */
+var cluster_all_entities;
+var cluster_all_relations;
+
 var nodes = [];
 var links = [];
 var __relationText_from = '0..N';
@@ -35,7 +48,7 @@ function visualizeSchema(project) {
     dictionary_tables = [];
     nodes = [];
     links = [];
-    
+
     // If there the project has already saved data/layout, load it
     if(project.data != undefined) {
         nodes = project.data.nodeData;
@@ -47,14 +60,14 @@ function visualizeSchema(project) {
         for(var i = 0; i < links.length; i++) {
             var pointsList = new go.List(go.Point);
             for(var j = 0; j < links[i].points.o.length; j++) {
-                pointsList.add(new go.Point(links[i].points.o[j].J, links[i].points.o[j].K)); 
+                pointsList.add(new go.Point(links[i].points.o[j].J, links[i].points.o[j].K));
             }
             links[i].points = pointsList;
         }
         // Render the data
         render(nodes, links);
         return;
-    } 
+    }
     // AJAX 1 - Fetfhing database details (all column information)
     var ajax_fetchDatabaseDetails = $.ajax({
         url: 'http://localhost:3000/sqldb/fetchDatabaseDetails',
@@ -233,7 +246,7 @@ function initDiagramCanvas(layoutID) {
     }
 
     var layout;
-    
+
     if(layoutID === 1) {
         layout = $$(go.GridLayout);
     }
@@ -247,9 +260,9 @@ function initDiagramCanvas(layoutID) {
         layout = $$(go.LayeredDigraphLayout);
     }  else
         layout = new go.Layout();
-    
 
-    
+
+
     // if (window.goSamples) goSamples(); // init for these samples -- you don't need to call this
     myDiagram =
         $$(go.Diagram, "myDiagramDiv", // must name or refer to the DIV HTML element
@@ -458,4 +471,118 @@ function setHandler(node, button) {
 function saveLayoutInformation() {
     PM.saveProjectData({nodeData: nodes,
                         linkData: links});
+}
+
+/**
+ * This function implments a clustering algorithm that is similar to the
+ * algorithm discussed in "Clustering relations into abstract ER schemas
+ * for database reverse engineering" by P. Sousa et al.
+ *
+ * Preconditions:
+ *      "dictionary_tables" must be populated
+ * Postconditions:
+ *      "cluster_all_entities" and "cluster_all_relations" are populated
+ *      cluster_all_entities = [ [AE1],[AE2], ... ,[AEN] ]
+ *      cluster_all_relations = [ [AR1],[AR2], ... ,[AR(N/2)] ]
+ *          where AR[x] relates AE[2x] and AE[2x+1]
+ *
+ */
+function cluster() {
+
+    // Init
+    cluster_all_entities = [];
+    cluster_all_relations = [];
+
+    // For one iteration of clustering
+    var cluster_a;
+    var cluster_b;
+    var cluster_rel;
+    var list_keys_pri = [];
+    var list_keys_pri_prev = [];
+    var tableName;
+
+    // 1
+    // Transforming dictionary_tables into string of the form:
+    // var str = "col1.col2.[...].tableName";
+    var str;
+    for (var t in dictionary_tables) {
+        str = "";
+        for (var col in dictionary_tables[t].cols) {
+            if (dictionary_tables[t].cols[col].isKey) {
+                str += dictionary_tables[t].cols[col].name + ".";
+            }
+        }
+        str += t;
+        list_keys_pri.push(str);
+    }
+
+    // 2
+    // sort the list of primary keys
+    list_keys_pri.sort();
+
+    // Until all tables are classified
+    while (list_keys_pri.length !== 0) {
+
+        // 3
+        // Get starting point
+        // Starting point 1 "str_start" is first key in the list
+        // Starting point 2 "str_start2" is first key in the list
+        //     that does not contian "str_start"
+        var str_start = list_keys_pri[0].split(".")[0];
+        var str_start2;
+        for(var key = 1; key < list_keys_pri.length; key++){
+            if (!list_keys_pri[key].includes(str_start)) {
+                str_start2 = list_keys_pri[key].split(".")[0]; // first token (pri key)
+                break;
+            }
+        }
+
+        // Setting up this iteration
+
+        // prev = curr
+        list_keys_pri_prev = list_keys_pri;
+        list_keys_pri = [];
+
+        // clearing out clusters
+        cluster_a = [];
+        cluster_b = [];
+        cluster_rels = [];
+
+        // for all tables
+        for(var i = 0; i < list_keys_pri_prev.length; i++){
+
+            // get table name from "col1.col2.[...].tableName"
+            tableName = list_keys_pri_prev[i].split(".");
+            tableName = tableName[tableName.length - 1];
+
+            // evaluate which cluster they belong in
+            var isInA = list_keys_pri_prev[i].includes(str_start);
+            var isInB = list_keys_pri_prev[i].includes(str_start2);
+
+            // Append to appropriate cluster
+            if (isInA && isInB) {
+                // belongs in abstract relationship
+                cluster_rels.push(tableName);
+            } else if (isInA && !isInB) {
+                // belongs in abstract entity 1
+                cluster_a.push(tableName);
+            } else if (!isInA && isInB) {
+                // belongs in abstract entity 2
+                cluster_b.push(tableName);
+            } else {
+                // belongs elsewhere
+                list_keys_pri.push(list_keys_pri_prev[i]);
+            }
+        }
+
+        // Append clusters to main data structure
+        cluster_all_entities.push(cluster_a);
+        cluster_all_entities.push(cluster_b);
+        cluster_all_relations.push(cluster_rels);
+
+    }
+
+    console.log(cluster_all_entities);
+    console.log(cluster_all_relations); // todo delte before commit
+
 }
