@@ -237,38 +237,6 @@ function makeClusterEntities() {
     topLevelNodes = [];
     topLevelLinks = [];
 
-    links.push({
-        'visible': true,
-        'from': 'r1',
-        'to': 'r2',
-        'text': '1',
-        'toText': '1..N'
-    });
-
-    links.push({
-        'visible': true,
-        'from': 'r4',
-        'to': 'r5',
-        'text': '1',
-        'toText': '1..N'
-    });
-
-    links.push({
-        'visible': true,
-        'from': 'r8',
-        'to': 'r10',
-        'text': '1',
-        'toText': '1..N'
-    });
-
-    links.push({
-        'visible': true,
-        'from': 'r9',
-        'to': 'r10',
-        'text': '1',
-        'toText': '1..N'
-    });
-
     for(var i = 0; i < cluster_all_entities.length; i++) {
         var entity = cluster_all_entities[i];
         var entityData = [];
