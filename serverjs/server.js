@@ -8,7 +8,8 @@ var app = express();
 var server = http.createServer(app);
 
 app.use(express.static('../public'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 
 /****************************** Express Routes ********************************/
 app.get('/', function (req, res) {
