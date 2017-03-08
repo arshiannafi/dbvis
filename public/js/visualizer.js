@@ -32,6 +32,8 @@ var dictionary_tables = [];
 var cluster_all_entities;
 var cluster_all_relations;
 
+var topLevelNodes = [];
+var topLevelLinks = [];
 var nodes = [];
 var links = [];
 var __relationText_from = '0..N';
@@ -176,7 +178,7 @@ function visualizeSchema(project) {
                 'toText': __relationText_to
             });
         }
-
+        
         render(nodes, links, false);
 
     }); // End of function that exectues when 2 AJAX calls are done
@@ -196,8 +198,215 @@ function render(nodeDataArray, linkDataArray, keepLinkPosition) {
             linkDataArray[i].points = null;
         }
     }
+    nodes = nodeDataArray;
+    links = linkDataArray;
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
     makeList();
+}
+
+/**
+ * This function makes the abstract entity and relation data. This
+ * data is then used to render the layout.
+ *
+ * $$param {Array} nodeDataArray
+ * $$param {Array} linkDataArray
+ */
+function makeClusterEntities() {
+    cluster();
+    topLevelNodes = [];
+    topLevelLinks = [];
+
+    links.push({
+        'visible': true,
+        'from': 'r1',
+        'to': 'r2',
+        'text': '1',
+        'toText': '1..N'
+    });
+
+    links.push({
+        'visible': true,
+        'from': 'r4',
+        'to': 'r5',
+        'text': '1',
+        'toText': '1..N'
+    });
+
+    links.push({
+        'visible': true,
+        'from': 'r8',
+        'to': 'r10',
+        'text': '1',
+        'toText': '1..N'
+    });
+    
+    links.push({
+        'visible': true,
+        'from': 'r9',
+        'to': 'r10',
+        'text': '1',
+        'toText': '1..N'
+    });
+    
+    for(var i = 0; i < cluster_all_entities.length; i++) {
+        var entity = cluster_all_entities[i];
+        var entityData = [];
+        
+        // Set nodes of entity
+        for(var j = 0; j < entity.length; j++) {
+            var tableName = entity[j];
+            
+            entityData.push({
+                'key': tableName, // table name
+                'visible': true,
+                'items': dictionary_tables[tableName].cols, // cols of the table
+            });
+        }
+        
+        // Set links within of entity
+        var linkData = [];
+        
+        // Go through each node
+        for(var j = 0; j < entityData.length; j++) {
+            
+            // Get name of the node
+            var tableName = entityData[j].key;
+            
+            // Go through each link to see if this entity has a link
+            for(var k = 0; k < links.length; k++) {
+                
+                if(links[k] == null)
+                    continue;
+                
+                // If this link is connected to this node
+                if(links[k].to == tableName || links[k].from == tableName) {
+                    // check if other node is in the abstract entity
+                    var otherTableName;
+                    if(links[k].to == tableName)
+                        otherTableName = links[k].from;
+                    if(links[k].from == tableName)
+                        otherTableName = links[k].to;
+                    
+                    for(var l = 0; l < entityData.length; l++) {
+                        if(entityData[l].key == otherTableName) {
+                            linkData.push(links[k]);
+                            break;
+                        }
+                    }
+                    
+                    // this link cannot be in any other entity, so remove it
+                    links[k] = null;
+                }
+            }
+        }
+        
+        // set attributes of entity
+        var item = {'name': 'entity',
+                    'isKey': 'false', // (boolean) primary key
+                    'figure': 'Cube1',
+                    'color': 'blue'};
+        
+        // set data about the entity
+        topLevelNodes.push({
+            'key': 'AE ' + (i),
+            'visiblity': true,
+            'nodeData': entityData,
+            'linkData': linkData,
+            'items': [item]
+        });
+    }
+    
+    for(var i = 0; i < cluster_all_relations.length; i++) {
+        var entity = cluster_all_entities[i];
+        var entityData = [];
+        
+        // Set nodes of entity
+        for(var j = 0; j < entity.length; j++) {
+            var tableName = entity[j];
+            
+            entityData.push({
+                'key': tableName, // table name
+                'visible': true,
+                'items': dictionary_tables[tableName].cols, // cols of the table
+            });
+        }
+        
+        // Set links within of entity
+        var linkData = [];
+        
+        // Go through each node
+        for(var j = 0; j < entityData.length; j++) {
+            // Get name of the node
+            var tableName = entityData.key;
+            // Go through each link to see if this entity has a link
+            for(var k = 0; k < links.length; k++) {
+                
+                if(links[k] == null)
+                    continue;
+                
+                // If this link is connected to this node
+                if(links[k].to == tableName || links[k].from == tableName) {
+                    // check if other node is in the abstract entity
+                    var otherTableName;
+                    if(links[k].to == tableName)
+                        otherTableName = links[i].from;
+                    if(links[k].from == tableName)
+                        otherTableName = links[k].to;
+                    
+                    for(var l = 0; l < entityData.length; l++) {
+                        if(entityData[l].key == otherTableName) {
+                            linkData.push(linka[k]);
+                            break;
+                        }
+                    }
+                    
+                    // this link cannot be in any other entity, so remove it
+                    links[k] = null;
+                }
+            }
+        }
+        
+        // set attributes of entity
+        var item = {'name': 'relation',
+                    'isKey': 'false', // (boolean) primary key
+                    'figure': 'Cube1',
+                    'color': 'red'};
+        
+        // set data about the entity
+        topLevelNodes.push({
+            'key': 'AR ' + (i),
+            'visiblity': true,
+            'nodeData': entityData,
+            'linkData': linkData,
+            'items': [item]
+        });
+    }
+    
+    for(var i = 0 ; i < cluster_all_relations.length; i++) {
+        topLevelLinks.push({
+            'visible': true,
+            'from': 'AE ' + (2*i),
+            'to': 'AR ' + i,
+            'text': '',
+            'toText': '',
+        });
+        topLevelLinks.push({
+            'visible': true,
+            'from': 'AE ' + (2*i+1),
+            'to': 'AR ' + i,
+            'text': '',
+            'toText': '',
+        });
+    }
+    render(topLevelNodes, topLevelLinks, false);
+}
+
+function drillIn(entity) {
+    render(entity.nodeData, entity.linkData, true);
+}
+
+function drillOut() {
+    render(topLevelNodes, topLevelLinks, true);
 }
 
 /**
@@ -476,8 +685,8 @@ function setHandler(node, button) {
  * Save all of the layout information currently on the screen
  */
 function saveLayoutInformation() {
-    PM.saveProjectData({nodeData: nodes,
-                        linkData: links});
+    PM.saveProjectData({nodeData: topLevelNodes,
+                        linkData: topLevelLinks});
 }
 
 /**
