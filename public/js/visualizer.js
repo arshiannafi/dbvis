@@ -200,7 +200,7 @@ function visualizeSchema(project) {
             });
         }
 
-        makeClusterEntities();s
+        makeClusterEntities();
 
     }); // End of function that exectues when 2 AJAX calls are done
 
