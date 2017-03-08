@@ -199,7 +199,7 @@ function visualizeSchema(project) {
                 'toText': __relationText_to
             });
         }
-        
+
         render(nodes, links, false);
 
     }); // End of function that exectues when 2 AJAX calls are done
@@ -260,7 +260,7 @@ function makeClusterEntities() {
         'text': '1',
         'toText': '1..N'
     });
-    
+
     links.push({
         'visible': true,
         'from': 'r9',
@@ -268,37 +268,37 @@ function makeClusterEntities() {
         'text': '1',
         'toText': '1..N'
     });
-    
+
     for(var i = 0; i < cluster_all_entities.length; i++) {
         var entity = cluster_all_entities[i];
         var entityData = [];
-        
+
         // Set nodes of entity
         for(var j = 0; j < entity.length; j++) {
             var tableName = entity[j];
-            
+
             entityData.push({
                 'key': tableName, // table name
                 'visible': true,
                 'items': dictionary_tables[tableName].cols, // cols of the table
             });
         }
-        
+
         // Set links within of entity
         var linkData = [];
-        
+
         // Go through each node
         for(var j = 0; j < entityData.length; j++) {
-            
+
             // Get name of the node
             var tableName = entityData[j].key;
-            
+
             // Go through each link to see if this entity has a link
             for(var k = 0; k < links.length; k++) {
-                
+
                 if(links[k] == null)
                     continue;
-                
+
                 // If this link is connected to this node
                 if(links[k].to == tableName || links[k].from == tableName) {
                     // check if other node is in the abstract entity
@@ -307,26 +307,26 @@ function makeClusterEntities() {
                         otherTableName = links[k].from;
                     if(links[k].from == tableName)
                         otherTableName = links[k].to;
-                    
+
                     for(var l = 0; l < entityData.length; l++) {
                         if(entityData[l].key == otherTableName) {
                             linkData.push(links[k]);
                             break;
                         }
                     }
-                    
+
                     // this link cannot be in any other entity, so remove it
                     links[k] = null;
                 }
             }
         }
-        
+
         // set attributes of entity
         var item = {'name': 'entity',
                     'isKey': 'false', // (boolean) primary key
                     'figure': 'Cube1',
                     'color': 'blue'};
-        
+
         // set data about the entity
         topLevelNodes.push({
             'key': 'AE ' + (i),
@@ -336,35 +336,35 @@ function makeClusterEntities() {
             'items': [item]
         });
     }
-    
+
     for(var i = 0; i < cluster_all_relations.length; i++) {
         var entity = cluster_all_entities[i];
         var entityData = [];
-        
+
         // Set nodes of entity
         for(var j = 0; j < entity.length; j++) {
             var tableName = entity[j];
-            
+
             entityData.push({
                 'key': tableName, // table name
                 'visible': true,
                 'items': dictionary_tables[tableName].cols, // cols of the table
             });
         }
-        
+
         // Set links within of entity
         var linkData = [];
-        
+
         // Go through each node
         for(var j = 0; j < entityData.length; j++) {
             // Get name of the node
             var tableName = entityData.key;
             // Go through each link to see if this entity has a link
             for(var k = 0; k < links.length; k++) {
-                
+
                 if(links[k] == null)
                     continue;
-                
+
                 // If this link is connected to this node
                 if(links[k].to == tableName || links[k].from == tableName) {
                     // check if other node is in the abstract entity
@@ -373,26 +373,26 @@ function makeClusterEntities() {
                         otherTableName = links[i].from;
                     if(links[k].from == tableName)
                         otherTableName = links[k].to;
-                    
+
                     for(var l = 0; l < entityData.length; l++) {
                         if(entityData[l].key == otherTableName) {
                             linkData.push(linka[k]);
                             break;
                         }
                     }
-                    
+
                     // this link cannot be in any other entity, so remove it
                     links[k] = null;
                 }
             }
         }
-        
+
         // set attributes of entity
         var item = {'name': 'relation',
                     'isKey': 'false', // (boolean) primary key
                     'figure': 'Cube1',
                     'color': 'red'};
-        
+
         // set data about the entity
         topLevelNodes.push({
             'key': 'AR ' + (i),
@@ -402,7 +402,7 @@ function makeClusterEntities() {
             'items': [item]
         });
     }
-    
+
     for(var i = 0 ; i < cluster_all_relations.length; i++) {
         topLevelLinks.push({
             'visible': true,
@@ -419,7 +419,9 @@ function makeClusterEntities() {
             'toText': '',
         });
     }
-    render(topLevelNodes, topLevelLinks, false);
+
+    makeClusterEntities()
+
 }
 
 function drillIn(entity) {
@@ -483,9 +485,9 @@ function initDiagramCanvas() {
     if(myDiagram !== undefined && myDiagram.div !== null) {
         myDiagram.div = null;
     }
-    
+
     var layout;
-    
+
     if(layoutID === 1) {
         layout = $$(go.GridLayout);
     }
@@ -500,7 +502,7 @@ function initDiagramCanvas() {
     }  else {
         layout = new go.Layout();
     }
-        
+
 
 
 
