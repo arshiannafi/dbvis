@@ -229,8 +229,7 @@ class ClickHandler {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
             layout = 1;
             initDiagramCanvas();
-            //TODO: MUST PASS CORRECT NODES/LINKS based on ENTITY or DRILLDOWN
-            render(nodes, links);
+            render(nodes, links, false);
         }
         else {
             console.log("[ERROR] schema data not present");
@@ -243,8 +242,7 @@ class ClickHandler {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
             layout = 2;
             initDiagramCanvas();
-            //TODO: MUST PASS CORRECT NODES/LINKS based on ENTITY or DRILLDOWN
-            render(nodes, links);
+            render(nodes, links, false);
         }
         else {
             console.log("[ERROR] schema data not present");
@@ -257,8 +255,7 @@ class ClickHandler {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
             layout = 3;
             initDiagramCanvas();
-            //TODO: MUST PASS CORRECT NODES/LINKS based on ENTITY or DRILLDOWN
-            render(nodes, links);
+            render(nodes, links, false);
         }
         else {
             console.log("[ERROR] schema data not present");
@@ -271,8 +268,7 @@ class ClickHandler {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
             layout = 4;
             initDiagramCanvas();
-            //TODO: MUST PASS CORRECT NODES/LINKS based on ENTITY or DRILLDOWN
-            render(nodes, links);
+            render(nodes, links, false);
         }
         else {
             console.log("[ERROR] schema data not present");
