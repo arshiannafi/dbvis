@@ -165,8 +165,13 @@ class ClickHandler {
         VC.show("visualization");
     }
 
-    static drillDown() {
-        VC.show("drilldown-vis");
+    static drillDown(e, obj) {
+
+        console.log('Drilling Down!');
+        console.log('Not yet implemented');
+        //init diagram for Drill Down Diagram
+
+        VC.show("visualization");
     }
 
     static exportImage() {
@@ -221,7 +226,10 @@ class ClickHandler {
     static grid(e) {
         e.preventDefault();
         if(nodes && links) {
-            initDiagramCanvas(1);
+            //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
+            layout = 1;
+            initDiagramCanvas();
+            //TODO: MUST PASS CORRECT NODES/LINKS based on ENTITY or DRILLDOWN
             render(nodes, links);
         }
         else {
@@ -232,7 +240,10 @@ class ClickHandler {
     static forceDir(e) {
         e.preventDefault();
         if(nodes && links) {
-            initDiagramCanvas(2);
+            //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
+            layout = 2;
+            initDiagramCanvas();
+            //TODO: MUST PASS CORRECT NODES/LINKS based on ENTITY or DRILLDOWN
             render(nodes, links);
         }
         else {
@@ -243,7 +254,10 @@ class ClickHandler {
     static circular(e) {
         e.preventDefault();
         if(nodes && links) {
-            initDiagramCanvas(3);
+            //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
+            layout = 3;
+            initDiagramCanvas();
+            //TODO: MUST PASS CORRECT NODES/LINKS based on ENTITY or DRILLDOWN
             render(nodes, links);
         }
         else {
@@ -254,7 +268,10 @@ class ClickHandler {
     static layered(e) {
         e.preventDefault();
         if(nodes && links) {
-            initDiagramCanvas(4);
+            //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
+            layout = 4;
+            initDiagramCanvas();
+            //TODO: MUST PASS CORRECT NODES/LINKS based on ENTITY or DRILLDOWN
             render(nodes, links);
         }
         else {

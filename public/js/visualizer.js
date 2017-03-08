@@ -15,11 +15,32 @@
  *
  */
 
+//TODO: MAKE VISUALIZER A CLASS! THERE ARE TOO MANY GLOBAL VARIABLES HERE!
 
 // Global variables
 var myDiagram;
 var dictionary_cols = [];
 var dictionary_tables = [];
+
+/** Global Variable
+ * {Number} layoutID - keeps track of what layout to use
+ * Values:
+ * -1 = No Layout, use saved positions
+ *  1 = Grid
+ *  2 = Force Directed
+ *  3 = Circular
+ *  4 = Layered
+ */
+var layoutID = -1
+
+/** Global Variable
+ * {Number} Context - Whether in Entity or Drilldown diagram
+ * NOTE: MAY NOT BE NECESSARY?
+ * Values:
+ *  1 = Entity and Relations Digaram
+ *  2 = Drill Down
+ */
+var context
 
 /**
  * Abstract Entity (AE) and Abstract Relation (AR) data structure property:
@@ -39,7 +60,7 @@ var __relationText_to = '1';
 // End of globar variables
 
 // Init canvas
-initDiagramCanvas(-1);
+initDiagramCanvas();
 
 // When window loads
 function visualizeSchema(project) {
@@ -229,14 +250,18 @@ function getRelatedTables(tableName) {
 /**
  * Initializes the diagram based on the selected layout
  *
- * $$param {Number} layoutID - The name of the table
+ * NOTE: Parameters were moved to global variables, but are still described here
+ *          due to their relevence
+ *
+ * {Number} layoutID
  * Values:
+ * -1 = No Layout, use saved positions
  *  1 = Grid
  *  2 = Force Directed
  *  3 = Circular
  *  4 = Layered
  */
-function initDiagramCanvas(layoutID) {
+function initDiagramCanvas() {
 
     var $$ = go.GraphObject.make; // for conciseness in defining templates
 
@@ -288,72 +313,96 @@ function initDiagramCanvas(layoutID) {
                 new go.Binding("text", "name"))
         );
     // define the Node template, representing an entity
+
     myDiagram.nodeTemplate =
-        $$(go.Node, "Auto", // the whole node panel
+    $$(go.Node, "Auto", // the whole node panel
+        {
+            selectionAdorned: true,
+            resizable: true,
+            layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
+            fromSpot: go.Spot.AllSides,
+            toSpot: go.Spot.AllSides,
+            isShadowed: true,
+            shadowColor: "#C5C1AA"
+        },
+        new go.Binding("keyForButton", "key"),
+        new go.Binding("location", "location").makeTwoWay(),
+        new go.Binding("visible", "visible").makeTwoWay(),
+        // define the node's outer shape, which will surround the Table
+        $$(go.Shape, "Rectangle", {
+            fill: 'white',
+            stroke: "#756875",
+            strokeWidth: 3
+        }),
+        $$(go.Panel, "Table",
             {
-                selectionAdorned: true,
-                resizable: true,
-                layoutConditions: go.Part.LayoutStandard & ~go.Part.LayoutNodeSized,
-                fromSpot: go.Spot.AllSides,
-                toSpot: go.Spot.AllSides,
-                isShadowed: true,
-                shadowColor: "#C5C1AA"
+                margin: 8,
+                stretch: go.GraphObject.Fill
             },
-            new go.Binding("keyForButton", "key"),
-            new go.Binding("location", "location").makeTwoWay(),
-            new go.Binding("visible", "visible").makeTwoWay(),
-            // define the node's outer shape, which will surround the Table
-            $$(go.Shape, "Rectangle", {
-                fill: 'white',
-                stroke: "#756875",
-                strokeWidth: 3
-            }),
-            $$(go.Panel, "Table", {
-                    margin: 8,
-                    stretch: go.GraphObject.Fill
-                },
-                $$(go.RowColumnDefinition, {
+            $$(go.RowColumnDefinition,
+                {
                     row: 0,
                     sizing: go.RowColumnDefinition.None
-                }),
-                // the table header
-                $$(go.TextBlock, {
-                        row: 0,
-                        alignment: go.Spot.Center,
-                        margin: new go.Margin(0, 14, 0, 2), // leave room for Button
-                        font: "bold 16px sans-serif",
-                        editable: true
-                    },
-                    new go.Binding("text", "key").makeTwoWay()),
-                // the collapse/expand button
-                $$("PanelExpanderButton", "LIST", // the name of the element whose visibility this button toggles
-                    {
-                        row: 0,
-                        alignment: go.Spot.TopRight
-                    }),
-                $$("Button",
-                    { row: 1,
-                        alignment: go.Spot.TopRight,
-                        click: expand },
-                    $$(go.TextBlock, "+")),
-                $$("Button",
-                    { row: 2,
-                        alignment: go.Spot.TopRight,
-                        click: toggleVisibility },
-                    $$(go.TextBlock, "-")),
-                // the list of Panels, each showing an attribute
-                $$(go.Panel, "Vertical", {
-                        name: "LIST",
-                        row: 1,
-                        padding: 3,
-                        alignment: go.Spot.TopLeft,
-                        defaultAlignment: go.Spot.Left,
-                        stretch: go.GraphObject.Horizontal,
-                        itemTemplate: itemTempl
-                    },
-                    new go.Binding("itemArray", "items"))
-            ) // end Table Panel
-        ); // end Node
+                }
+            ),
+            // the table header
+            $$(go.TextBlock,
+                {
+                    row: 0,
+                    alignment: go.Spot.Center,
+                    margin: new go.Margin(0, 14, 0, 2), // leave room for Button
+                    font: "bold 16px sans-serif",
+                    editable: true
+                },
+                new go.Binding("text", "key").makeTwoWay()
+            ),
+            // the collapse/expand button
+            $$("PanelExpanderButton", "LIST", // the name of the element whose visibility this button toggles
+                {
+                    row: 0,
+                    alignment: go.Spot.TopRight
+                }
+            ),
+            $$("Button",
+                {
+                    row: 1,
+                    alignment: go.Spot.TopRight,
+                    click: expand
+                },
+                $$(go.TextBlock, "+")
+            ),
+            $$("Button",
+                {
+                    row: 2,
+                    alignment: go.Spot.TopRight,
+                    click: toggleVisibility
+                },
+                $$(go.TextBlock, "-")
+            ),
+            $$("Button",
+                {
+                    row: 1,
+                    alignment: go.Spot.TopLeft,
+                    click: ClickHandler.drillDown
+                },
+                $$(go.TextBlock, "@")
+            ),
+            // the list of Panels, each showing an attribute
+            $$(go.Panel, "Vertical",
+                {
+                    name: "LIST",
+                    row: 1,
+                    padding: 3,
+                    alignment: go.Spot.TopLeft,
+                    defaultAlignment: go.Spot.Left,
+                    stretch: go.GraphObject.Horizontal,
+                    itemTemplate: itemTempl
+                },
+                new go.Binding("itemArray", "items")
+            )
+        ) // end Table Panel
+    ); // end Node
+
     // define the Link template, representing a relationship
     myDiagram.linkTemplate =
         $$(go.Link, // the whole link panel
