@@ -222,7 +222,7 @@ class ClickHandler {
         e.preventDefault();
         if(nodes && links) {
             initDiagramCanvas(1);
-            render(nodes, links);
+            render(nodes, links, false);
         }
         else {
             console.log("[ERROR] schema data not present");
@@ -233,7 +233,7 @@ class ClickHandler {
         e.preventDefault();
         if(nodes && links) {
             initDiagramCanvas(2);
-            render(nodes, links);
+            render(nodes, links, false);
         }
         else {
             console.log("[ERROR] schema data not present");
@@ -244,7 +244,7 @@ class ClickHandler {
         e.preventDefault();
         if(nodes && links) {
             initDiagramCanvas(3);
-            render(nodes, links);
+            render(nodes, links, false);
         }
         else {
             console.log("[ERROR] schema data not present");
@@ -255,7 +255,7 @@ class ClickHandler {
         e.preventDefault();
         if(nodes && links) {
             initDiagramCanvas(4);
-            render(nodes, links);
+            render(nodes, links, false);
         }
         else {
             console.log("[ERROR] schema data not present");

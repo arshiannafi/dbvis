@@ -65,7 +65,7 @@ function visualizeSchema(project) {
             links[i].points = pointsList;
         }
         // Render the data
-        render(nodes, links);
+        render(nodes, links, true);
         return;
     }
     // AJAX 1 - Fetfhing database details (all column information)
@@ -177,7 +177,7 @@ function visualizeSchema(project) {
             });
         }
 
-        render(nodes, links);
+        render(nodes, links, false);
 
     }); // End of function that exectues when 2 AJAX calls are done
 
@@ -190,7 +190,12 @@ function visualizeSchema(project) {
  * $$param {Array} nodeDataArray
  * $$param {Array} linkDataArray
  */
-function render(nodeDataArray, linkDataArray) {
+function render(nodeDataArray, linkDataArray, keepLinkPosition) {
+    if(!keepLinkPosition) {
+        for(var i=0; i < linkDataArray.length; i++) {
+            linkDataArray[i].points = null;
+        }
+    }
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
     makeList();
 }
@@ -244,9 +249,9 @@ function initDiagramCanvas(layoutID) {
     if(myDiagram !== undefined && myDiagram.div !== null) {
         myDiagram.div = null;
     }
-
+    
     var layout;
-
+    
     if(layoutID === 1) {
         layout = $$(go.GridLayout);
     }
@@ -258,8 +263,10 @@ function initDiagramCanvas(layoutID) {
     }
     else if(layoutID === 4) {
         layout = $$(go.LayeredDigraphLayout);
-    }  else
+    }  else {
         layout = new go.Layout();
+    }
+        
 
 
 
