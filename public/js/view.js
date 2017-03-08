@@ -162,16 +162,13 @@ class ClickHandler {
     }
 
     static drillUp() {
-        VC.show("visualization");
+        layoutID = -1
+        drillOut()
     }
 
     static drillDown(e, obj) {
-
-        console.log('Drilling Down!');
-        console.log('Not yet implemented');
-        //init diagram for Drill Down Diagram
-
-        VC.show("visualization");
+        layoutID = -1
+        drillIn(obj.part.data)
     }
 
     static exportImage() {
@@ -227,7 +224,7 @@ class ClickHandler {
         e.preventDefault();
         if(nodes && links) {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
-            layout = 1;
+            layoutID = 1;
             initDiagramCanvas();
             render(nodes, links, false);
         }
@@ -240,7 +237,7 @@ class ClickHandler {
         e.preventDefault();
         if(nodes && links) {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
-            layout = 2;
+            layoutID = 2;
             initDiagramCanvas();
             render(nodes, links, false);
         }
@@ -253,7 +250,7 @@ class ClickHandler {
         e.preventDefault();
         if(nodes && links) {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
-            layout = 3;
+            layoutID = 3;
             initDiagramCanvas();
             render(nodes, links, false);
         }
@@ -266,7 +263,7 @@ class ClickHandler {
         e.preventDefault();
         if(nodes && links) {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
-            layout = 4;
+            layoutID = 4;
             initDiagramCanvas();
             render(nodes, links, false);
         }
