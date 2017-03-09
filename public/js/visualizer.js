@@ -66,28 +66,28 @@ function visualizeSchema(project) {
     } else {
         loadProjectFromDatabase(project, function(dictionary_cols, dictionary_tables) {
             makeClusterEntities(dictionary_cols, dictionary_tables);
-            render(topLevelNodes, topLevelLinks, false);            
+            render(topLevelNodes, topLevelLinks, false);
         });
-        
+
     }
 }
 
 function unpackProject(project) {
-    
+
     // If there the project has already saved data/layout, load it
     var projectNodes = project.data.nodeData;
     var projectLinks = project.data.linkData;
-    
+
     var loadNodesAndLinks = function(nodes, links) {
         // Using the given data from file, make objects for data binding
         for(var i = 0; i < nodes.length; i++) {
             if(nodes[i].location)
                 nodes[i].location = new go.Point(nodes[i].location.J, nodes[i].location.K);
-            
+
             if(nodes[i].nodeData)
                 loadNodesAndLinks(nodes[i].nodeData, nodes[i].linkData);
         }
-        
+
         for(var i = 0; i < links.length; i++) {
             var pointsList = new go.List(go.Point);
             for(var j = 0; j < links[i].points.o.length; j++) {
@@ -96,9 +96,9 @@ function unpackProject(project) {
             links[i].points = pointsList;
         }
     }
-    
+
     loadNodesAndLinks(projectNodes, projectLinks);
-    
+
     var data = {};
     data.nodes = projectNodes;
     data.links = projectLinks;
@@ -142,10 +142,10 @@ function loadProjectFromDatabase(project, callbackWhenDone) {
 
         var dictionary_cols = [];
         var dictionary_tables = [];
-        
+
         // parse columns' data to JSON object
         data = JSON.parse(ajax_fetchDatabaseDetails.responseText);
-        
+
         for (var i in data) {
             dictionary_cols[data[i].table_name + '.' + data[i].column_name] = data[i];
         }
@@ -216,7 +216,7 @@ function loadProjectFromDatabase(project, callbackWhenDone) {
                 'toText': __relationText_to
             });
         }
-        
+
         callbackWhenDone(dictionary_cols, dictionary_tables);
 
     }); // End of function that exectues when 2 AJAX calls are done
@@ -229,13 +229,13 @@ function loadProjectFromDatabase(project, callbackWhenDone) {
  * $$param {Array} linkDataArray
  */
 function render(nodeDataArray, linkDataArray, keepLinkPosition) {
-    
+
     if(!keepLinkPosition) {
         for(var i=0; i < linkDataArray.length; i++) {
             linkDataArray[i].points = null;
         }
     }
-    
+
     currentNodes = nodeDataArray;
     currentLinks = linkDataArray;
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
@@ -250,12 +250,12 @@ function render(nodeDataArray, linkDataArray, keepLinkPosition) {
  * $$param {Array} linkDataArray
  */
 function makeClusterEntities(dictionary_cols, dictionary_tables) {
-    
+
     var data = cluster(dictionary_cols, dictionary_tables);
-    
+
     var cluster_all_entities = data.entities;
     var cluster_all_relations = data.relations;
-    
+
     topLevelNodes = [];
     topLevelLinks = [];
 
@@ -407,7 +407,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
     }
 
     for(var i = 0 ; i < cluster_all_relations.length; i++) {
-        
+
         topLevelLinks.push({
             'visible': true,
             'from': 'AE ' + (2*i),
@@ -568,6 +568,7 @@ function initDiagramCanvas() {
             $$(go.TextBlock,
                 {
                     row: 0,
+                    column: 1,
                     alignment: go.Spot.Center,
                     margin: new go.Margin(0, 14, 0, 2), // leave room for Button
                     font: "bold 16px sans-serif",
@@ -579,13 +580,15 @@ function initDiagramCanvas() {
             $$("PanelExpanderButton", "LIST", // the name of the element whose visibility this button toggles
                 {
                     row: 0,
+                    column: 2,
                     alignment: go.Spot.TopRight
                 }
             ),
             $$("Button",
                 {
                     row: 1,
-                    alignment: go.Spot.TopRight,
+                    column: 2,
+                    // alignment: go.Spot.TopRight,
                     click: expand
                 },
                 $$(go.TextBlock, "+")
@@ -593,6 +596,7 @@ function initDiagramCanvas() {
             $$("Button",
                 {
                     row: 2,
+                    column: 2,
                     alignment: go.Spot.TopRight,
                     click: toggleVisibility
                 },
@@ -601,6 +605,7 @@ function initDiagramCanvas() {
             $$("Button",
                 {
                     row: 1,
+                    column: 0,
                     alignment: go.Spot.TopLeft,
                     click: ClickHandler.drillDown
                 },
@@ -612,6 +617,7 @@ function initDiagramCanvas() {
                 {
                     name: "LIST",
                     row: 1,
+                    column: 1,
                     padding: 3,
                     alignment: go.Spot.TopLeft,
                     defaultAlignment: go.Spot.Left,
