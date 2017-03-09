@@ -645,7 +645,7 @@ function initDiagramCanvas() {
                 {
                     row: 1,
                     column: 2,
-                    // alignment: go.Spot.TopRight,
+                    alignment: go.Spot.TopRight,
                     click: expand
                 },
                 $$(go.TextBlock, "+")
