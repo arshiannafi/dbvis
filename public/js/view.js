@@ -163,13 +163,17 @@ class ClickHandler {
     }
 
     static drillUp() {
-        layoutID = -1
-        initDiagramCanvas();
-        drillOut()
+        if (context === 2) {
+            layoutID = -1;
+            context = 1;
+            initDiagramCanvas();
+            drillOut()
+        }
     }
 
     static drillDown(e, obj) {
-        layoutID = -1
+        layoutID = -1;
+        context = 2;
         initDiagramCanvas();
         drillIn(obj.part.data)
     }

@@ -39,7 +39,7 @@ var cluster_keyword_entities;
  *  1 = Entity and Relations Digaram
  *  2 = Drill Down
  */
-var context
+var context = 1;
 
 var topLevelNodes = [];
 var topLevelLinks = [];
