@@ -19,8 +19,6 @@
 
 // Global variables
 var myDiagram;
-var dictionary_cols = [];
-var dictionary_tables = [];
 
 /** Global Variable
  * {Number} layoutID - keeps track of what layout to use
@@ -42,21 +40,10 @@ var layoutID = -1
  */
 var context
 
-/**
- * Abstract Entity (AE) and Abstract Relation (AR) data structure property:
- * AR[x] relates AE[2x] and AE[2x+1]
- *
- *    +--------+     ^      +----------+
- *   | AE[2r] |---< AR >---| AE[2r+1] |
- *  +--------+      v     +----------+
- */
-var cluster_all_entities;
-var cluster_all_relations;
-
 var topLevelNodes = [];
 var topLevelLinks = [];
-var nodes = [];
-var links = [];
+var currentNodes = [];
+var currentLinks = [];
 var __relationText_from = '0..N';
 var __relationText_to = '1';
 // End of globar variables
@@ -67,19 +54,40 @@ initDiagramCanvas();
 // When window loads
 function visualizeSchema(project) {
 
-    dictionary_cols = [];
-    dictionary_tables = [];
-    nodes = [];
-    links = [];
+    currentNodes = [];
+    currentLinks = [];
 
-    // If there the project has already saved data/layout, load it
     if(project.data != undefined) {
-        nodes = project.data.nodeData;
-        links = project.data.linkData;
+        data = unpackProject(project);
+        topLevelNodes = data.nodes;
+        topLevelLinks = data.links;
+        render(topLevelNodes, topLevelLinks, true);
+        return;
+    } else {
+        loadProjectFromDatabase(project, function(dictionary_cols, dictionary_tables) {
+            makeClusterEntities(dictionary_cols, dictionary_tables);
+            render(topLevelNodes, topLevelLinks, false);            
+        });
+        
+    }
+}
+
+function unpackProject(project) {
+    
+    // If there the project has already saved data/layout, load it
+    var projectNodes = project.data.nodeData;
+    var projectLinks = project.data.linkData;
+    
+    var loadNodesAndLinks = function(nodes, links) {
         // Using the given data from file, make objects for data binding
         for(var i = 0; i < nodes.length; i++) {
-            nodes[i].location = new go.Point(nodes[i].location.J, nodes[i].location.K);
+            if(nodes[i].location)
+                nodes[i].location = new go.Point(nodes[i].location.J, nodes[i].location.K);
+            
+            if(nodes[i].nodeData)
+                loadNodesAndLinks(nodes[i].nodeData, nodes[i].linkData);
         }
+        
         for(var i = 0; i < links.length; i++) {
             var pointsList = new go.List(go.Point);
             for(var j = 0; j < links[i].points.o.length; j++) {
@@ -87,10 +95,18 @@ function visualizeSchema(project) {
             }
             links[i].points = pointsList;
         }
-        // Render the data
-        render(nodes, links, true);
-        return;
     }
+    
+    loadNodesAndLinks(projectNodes, projectLinks);
+    
+    var data = {};
+    data.nodes = projectNodes;
+    data.links = projectLinks;
+    return data;
+}
+
+
+function loadProjectFromDatabase(project, callbackWhenDone) {
     // AJAX 1 - Fetfhing database details (all column information)
     var ajax_fetchDatabaseDetails = $.ajax({
         url: 'http://localhost:3000/sqldb/fetchDatabaseDetails',
@@ -124,9 +140,12 @@ function visualizeSchema(project) {
     // When both AJAX calls are finished
     $.when(ajax_fetchDatabaseDetails, ajax_fetchTableLinks).done(function(jqxhr1, jqxhr2) {
 
+        var dictionary_cols = [];
+        var dictionary_tables = [];
+        
         // parse columns' data to JSON object
         data = JSON.parse(ajax_fetchDatabaseDetails.responseText);
-
+        
         for (var i in data) {
             dictionary_cols[data[i].table_name + '.' + data[i].column_name] = data[i];
         }
@@ -170,7 +189,7 @@ function visualizeSchema(project) {
         // For each table in the dictionary variable
         for (var k in dictionary_tables) {
             // Add entity
-            nodes.push({
+            currentNodes.push({
                 'key': k, // table name
                 'visible': true,
                 'items': dictionary_tables[k].cols, // cols of the table
@@ -178,8 +197,6 @@ function visualizeSchema(project) {
         }
 
         // End of entity processing (table / node on the graph)
-
-
 
         data = JSON.parse(ajax_fetchTableLinks.responseText);
 
@@ -191,7 +208,7 @@ function visualizeSchema(project) {
                 __relationText_from = '1';
             }
 
-            links.push({
+            currentLinks.push({
                 'visible': true,
                 'from': data[d].table_name,
                 'to': data[d].referenced_table_name,
@@ -199,13 +216,9 @@ function visualizeSchema(project) {
                 'toText': __relationText_to
             });
         }
-
-        render(nodes, links, false);
-
+        callbackWhenDone(dictionary_cols, dictionary_tables);
     }); // End of function that exectues when 2 AJAX calls are done
-
-} // end of onLoad
-
+}
 
 /**
  * This function renders/re-renders the given set of nodes and links.
@@ -214,13 +227,15 @@ function visualizeSchema(project) {
  * $$param {Array} linkDataArray
  */
 function render(nodeDataArray, linkDataArray, keepLinkPosition) {
+    
     if(!keepLinkPosition) {
         for(var i=0; i < linkDataArray.length; i++) {
             linkDataArray[i].points = null;
         }
     }
-    nodes = nodeDataArray;
-    links = linkDataArray;
+    
+    currentNodes = nodeDataArray;
+    currentLinks = linkDataArray;
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
     makeList();
 }
@@ -232,43 +247,16 @@ function render(nodeDataArray, linkDataArray, keepLinkPosition) {
  * $$param {Array} nodeDataArray
  * $$param {Array} linkDataArray
  */
-function makeClusterEntities() {
-    cluster();
+function makeClusterEntities(dictionary_cols, dictionary_tables) {
+    
+    var data = cluster(dictionary_cols, dictionary_tables);
+    
+    var cluster_all_entities = data.entities;
+    var cluster_all_relations = data.relations;
+    
     topLevelNodes = [];
     topLevelLinks = [];
-
-    links.push({
-        'visible': true,
-        'from': 'r1',
-        'to': 'r2',
-        'text': '1',
-        'toText': '1..N'
-    });
-
-    links.push({
-        'visible': true,
-        'from': 'r4',
-        'to': 'r5',
-        'text': '1',
-        'toText': '1..N'
-    });
-
-    links.push({
-        'visible': true,
-        'from': 'r8',
-        'to': 'r10',
-        'text': '1',
-        'toText': '1..N'
-    });
-
-    links.push({
-        'visible': true,
-        'from': 'r9',
-        'to': 'r10',
-        'text': '1',
-        'toText': '1..N'
-    });
-
+    
     for(var i = 0; i < cluster_all_entities.length; i++) {
         var entity = cluster_all_entities[i];
         var entityData = [];
@@ -286,7 +274,7 @@ function makeClusterEntities() {
 
         // Set links within of entity
         var linkData = [];
-
+        var links = currentLinks;
         // Go through each node
         for(var j = 0; j < entityData.length; j++) {
 
@@ -404,6 +392,7 @@ function makeClusterEntities() {
     }
 
     for(var i = 0 ; i < cluster_all_relations.length; i++) {
+        
         topLevelLinks.push({
             'visible': true,
             'from': 'AE ' + (2*i),
@@ -419,9 +408,6 @@ function makeClusterEntities() {
             'toText': '',
         });
     }
-
-    makeClusterEntities()
-
 }
 
 function drillIn(entity) {
@@ -444,8 +430,6 @@ function downloadImage() {
 }
 
 
-
-
 /**
  * Given a table name, this function returns all related tables.
  * Returns only outgoing edges.
@@ -455,9 +439,9 @@ function downloadImage() {
  */
 function getRelatedTables(tableName) {
     var relatedTables = [];
-    for (var i in links) {
-        if (links[i].from === tableName) {
-            relatedTables.push(links[i].to);
+    for (var i in currentLinks) {
+        if (currentLinks[i].from === tableName) {
+            relatedTables.push(currentLinks[i].to);
         }
     }
     return relatedTables;
@@ -639,15 +623,6 @@ function initDiagramCanvas() {
                     stroke: "#303B45",
                     strokeWidth: 2.5
                 }),
-            $$(go.TextBlock, "transition",  // the label text
-                {
-                  textAlign: "center",
-                  font: "9pt helvetica, arial, sans-serif",
-                  margin: 4,
-                  editable: true  // enable in-place editing
-                },
-                // editing the text automatically updates the model data
-                new go.Binding("text", "name").makeTwoWay()),
             $$(go.TextBlock, // the "from" label
                 {
                     textAlign: "center",
@@ -754,11 +729,11 @@ function saveLayoutInformation() {
  *          where AR[x] relates AE[2x] and AE[2x+1]
  *
  */
-function cluster() {
+function cluster(dictionary_cols, dictionary_tables) {
 
     // Init
-    cluster_all_entities = [];
-    cluster_all_relations = [];
+    var cluster_all_entities = [];
+    var cluster_all_relations = [];
 
     // For one iteration of clustering
     var cluster_a;
@@ -849,7 +824,9 @@ function cluster() {
 
     }
 
-    console.log(cluster_all_entities);
-    console.log(cluster_all_relations); // todo delte before commit
+    var data = {};
+    data.entities = cluster_all_entities;
+    data.relations = cluster_all_relations;
+    return data;
 
 }

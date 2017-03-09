@@ -163,11 +163,13 @@ class ClickHandler {
 
     static drillUp() {
         layoutID = -1
+        initDiagramCanvas();
         drillOut()
     }
 
     static drillDown(e, obj) {
         layoutID = -1
+        initDiagramCanvas();
         drillIn(obj.part.data)
     }
 
@@ -222,11 +224,11 @@ class ClickHandler {
 /* Database Visualization button handlers */
     static grid(e) {
         e.preventDefault();
-        if(nodes && links) {
+        if(currentNodes && currentLinks) {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
             layoutID = 1;
             initDiagramCanvas();
-            render(nodes, links, false);
+            render(currentNodes, currentLinks, false);
         }
         else {
             console.log("[ERROR] schema data not present");
@@ -235,11 +237,11 @@ class ClickHandler {
 
     static forceDir(e) {
         e.preventDefault();
-        if(nodes && links) {
+        if(currentNodes && currentLinks) {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
             layoutID = 2;
             initDiagramCanvas();
-            render(nodes, links, false);
+            render(currentNodes, currentLinks, false);
         }
         else {
             console.log("[ERROR] schema data not present");
@@ -248,11 +250,11 @@ class ClickHandler {
 
     static circular(e) {
         e.preventDefault();
-        if(nodes && links) {
+        if(currentNodes && currentLinks) {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
             layoutID = 3;
             initDiagramCanvas();
-            render(nodes, links, false);
+            render(currentNodes, currentLinks, false);
         }
         else {
             console.log("[ERROR] schema data not present");
@@ -261,11 +263,11 @@ class ClickHandler {
 
     static layered(e) {
         e.preventDefault();
-        if(nodes && links) {
+        if(currentNodes && currentLinks) {
             //TODO: MAKE LAYOUT ACCESS VISUALIZER CLASS ONCE CLASS IS MADE
             layoutID = 4;
             initDiagramCanvas();
-            render(nodes, links, false);
+            render(currentNodes, currentLinks, false);
         }
         else {
             console.log("[ERROR] schema data not present");
