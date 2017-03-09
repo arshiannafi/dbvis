@@ -272,6 +272,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
                 'visible': true,
                 'items': dictionary_tables[tableName].cols, // cols of the table
                 'drillDownVisible': false,
+                'figure': "Rectangle",
                 'color': 'white'
             });
         }
@@ -326,6 +327,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'nodeData': entityData,
             'linkData': linkData,
             'color': "#E67373",
+            'figure': "Rectangle",
             'items': [item],
             'drillDownVisible': true
         });
@@ -344,6 +346,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
                 'visible': true,
                 'items': dictionary_tables[tableName].cols, // cols of the table
                 'drillDownVisible': false,
+                'figure': "Rectangle",
                 'color': 'white'
             });
         }
@@ -398,6 +401,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'linkData': linkData,
             'color': '#E6A773',
             'drillDownVisible': true,
+            'figure': 'RoundedRectangle',
             'items': [item]
         });
     }
@@ -542,12 +546,13 @@ function initDiagramCanvas() {
         new go.Binding("location", "location").makeTwoWay(),
         new go.Binding("visible", "visible").makeTwoWay(),
         // define the node's outer shape, which will surround the Table
-        $$(go.Shape, "Rectangle", {
+        $$(go.Shape, {
             fill: 'white',
             stroke: "#756875",
             strokeWidth: 3
         },
-          new go.Binding("fill", "color")),
+          new go.Binding("fill", "color"),
+          new go.Binding("figure", "figure")),
         $$(go.Panel, "Table",
             {
                 margin: 8,
