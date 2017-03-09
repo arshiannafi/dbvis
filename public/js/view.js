@@ -153,6 +153,7 @@ class ClickHandler {
     }
 
     static back() {
+        PM.load();
         VC.show("view-select-proj");
     }
 

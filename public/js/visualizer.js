@@ -271,6 +271,8 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
                 'key': tableName, // table name
                 'visible': true,
                 'items': dictionary_tables[tableName].cols, // cols of the table
+                'drillDownVisible': false,
+                'color': 'yellow'
             });
         }
 
@@ -323,12 +325,14 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'visiblity': true,
             'nodeData': entityData,
             'linkData': linkData,
-            'items': [item]
+            'color': 'red',
+            'items': [item],
+            'drillDownVisible': true
         });
     }
 
     for(var i = 0; i < cluster_all_relations.length; i++) {
-        var entity = cluster_all_entities[i];
+        var entity = cluster_all_relations[i];
         var entityData = [];
 
         // Set nodes of entity
@@ -339,6 +343,8 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
                 'key': tableName, // table name
                 'visible': true,
                 'items': dictionary_tables[tableName].cols, // cols of the table
+                'drillDownVisible': false,
+                'color': 'yellow'
             });
         }
 
@@ -381,7 +387,8 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
         var item = {'name': 'relation',
                     'isKey': 'false', // (boolean) primary key
                     'figure': 'Cube1',
-                    'color': 'red'};
+                    'color': 'red',
+                    'drillDownVisible': true};
 
         // set data about the entity
         topLevelNodes.push({
@@ -389,6 +396,8 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'visiblity': true,
             'nodeData': entityData,
             'linkData': linkData,
+            'color': 'blue',
+            'drillDownVisible': true,
             'items': [item]
         });
     }
@@ -529,6 +538,7 @@ function initDiagramCanvas() {
             isShadowed: true,
             shadowColor: "#C5C1AA"
         },
+        //new go.Binding("Color", "color"),
         new go.Binding("keyForButton", "key"),
         new go.Binding("location", "location").makeTwoWay(),
         new go.Binding("visible", "visible").makeTwoWay(),
@@ -589,6 +599,7 @@ function initDiagramCanvas() {
                     alignment: go.Spot.TopLeft,
                     click: ClickHandler.drillDown
                 },
+                new go.Binding("visible", "drillDownVisible"),
                 $$(go.TextBlock, "@")
             ),
             // the list of Panels, each showing an attribute
