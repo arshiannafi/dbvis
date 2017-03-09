@@ -216,7 +216,9 @@ function loadProjectFromDatabase(project, callbackWhenDone) {
                 'toText': __relationText_to
             });
         }
+        
         callbackWhenDone(dictionary_cols, dictionary_tables);
+
     }); // End of function that exectues when 2 AJAX calls are done
 }
 
@@ -256,7 +258,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
     
     topLevelNodes = [];
     topLevelLinks = [];
-    
+
     for(var i = 0; i < cluster_all_entities.length; i++) {
         var entity = cluster_all_entities[i];
         var entityData = [];
