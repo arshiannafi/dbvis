@@ -29,7 +29,8 @@ var myDiagram;
  *  3 = Circular
  *  4 = Layered
  */
-var layoutID = -1
+var layoutID = -1;
+var cluster_keyword_entities;
 
 /** Global Variable
  * {Number} Context - Whether in Entity or Drilldown diagram
@@ -315,6 +316,36 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
         }
 
         // set attributes of entity
+        var itemList = [];
+        itemList.push({'name': 'No. of Tables: ' + entityData.length,
+                    //'isKey': 'false', // (boolean) primary key
+                    'figure': 'Cube1',
+                    'color': 'blue'});
+
+        if (linkData.length == 0){
+          itemList.push({'name': 'No. of Links: None',
+                        //'isKey': 'false', // (boolean) primary key
+                        'figure': 'Cube1',
+                            'color': 'green'});
+        } else {
+            itemList.push({'name': 'No. of Links: ' + linkData.length,
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'green'});
+          }
+        // all are at level 1
+        itemList.push({'name': 'Entity Depth: ' + "1",
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'orange'});
+
+        itemList.push({'name': 'Entity keywords: ' + cluster_keyword_entities[i],
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'orange'});
+
+
+
         var item = {'name': 'entity',
                     'isKey': 'false', // (boolean) primary key
                     'figure': 'Cube1',
@@ -328,7 +359,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'linkData': linkData,
             'color': "#E67373",
             'figure': "Rectangle",
-            'items': [item],
+            'items': itemList,
             'drillDownVisible': true
         });
     }
@@ -375,7 +406,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
 
                     for(var l = 0; l < entityData.length; l++) {
                         if(entityData[l].key == otherTableName) {
-                            linkData.push(linka[k]);
+                            linkData.push(links[k]);
                             break;
                         }
                     }
@@ -386,7 +417,33 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             }
         }
 
-        // set attributes of entity
+        // set attributes of relation
+
+        var itemList = [];
+        if ( linkData.length == 0){
+          itemList.push({'name': 'Links: ' + "None" ,
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'blue'});
+        } else {
+          itemList.push({'name': 'Links: ' + linkData[i].from +", "+ linkData[i].to,
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'blue'});
+        }
+
+        itemList.push({'name': 'Entity keywords : ' + cluster_keyword_entities[i] +", "+  cluster_keyword_entities[i+1],
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'orange'});
+
+
+        var item = {'name': 'relation',
+                    'isKey': 'false', // (boolean) primary key
+                    'figure': 'Cube1',
+                    'color': 'red'};
+
+
         var item = {'name': 'relation',
                     'isKey': 'false', // (boolean) primary key
                     'figure': 'Cube1',
@@ -402,7 +459,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'color': '#E6A773',
             'drillDownVisible': true,
             'figure': 'RoundedRectangle',
-            'items': [item]
+            'items': itemList
         });
     }
 
@@ -758,6 +815,7 @@ function cluster(dictionary_cols, dictionary_tables) {
     // Init
     var cluster_all_entities = [];
     var cluster_all_relations = [];
+    cluster_keyword_entities = [];
 
     // For one iteration of clustering
     var cluster_a;
@@ -804,7 +862,8 @@ function cluster(dictionary_cols, dictionary_tables) {
         }
 
         // Setting up this iteration
-
+        cluster_keyword_entities.push(str_start );
+        cluster_keyword_entities.push(str_start2 );
         // prev = curr
         list_keys_pri_prev = list_keys_pri;
         list_keys_pri = [];
