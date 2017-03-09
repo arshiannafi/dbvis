@@ -29,7 +29,8 @@ var myDiagram;
  *  3 = Circular
  *  4 = Layered
  */
-var layoutID = -1
+var layoutID = -1;
+var cluster_keyword_entities;
 
 /** Global Variable
  * {Number} Context - Whether in Entity or Drilldown diagram
@@ -66,28 +67,28 @@ function visualizeSchema(project) {
     } else {
         loadProjectFromDatabase(project, function(dictionary_cols, dictionary_tables) {
             makeClusterEntities(dictionary_cols, dictionary_tables);
-            render(topLevelNodes, topLevelLinks, false);            
+            render(topLevelNodes, topLevelLinks, false);
         });
-        
+
     }
 }
 
 function unpackProject(project) {
-    
+
     // If there the project has already saved data/layout, load it
     var projectNodes = project.data.nodeData;
     var projectLinks = project.data.linkData;
-    
+
     var loadNodesAndLinks = function(nodes, links) {
         // Using the given data from file, make objects for data binding
         for(var i = 0; i < nodes.length; i++) {
             if(nodes[i].location)
                 nodes[i].location = new go.Point(nodes[i].location.J, nodes[i].location.K);
-            
+
             if(nodes[i].nodeData)
                 loadNodesAndLinks(nodes[i].nodeData, nodes[i].linkData);
         }
-        
+
         for(var i = 0; i < links.length; i++) {
             var pointsList = new go.List(go.Point);
             for(var j = 0; j < links[i].points.o.length; j++) {
@@ -96,9 +97,9 @@ function unpackProject(project) {
             links[i].points = pointsList;
         }
     }
-    
+
     loadNodesAndLinks(projectNodes, projectLinks);
-    
+
     var data = {};
     data.nodes = projectNodes;
     data.links = projectLinks;
@@ -142,10 +143,10 @@ function loadProjectFromDatabase(project, callbackWhenDone) {
 
         var dictionary_cols = [];
         var dictionary_tables = [];
-        
+
         // parse columns' data to JSON object
         data = JSON.parse(ajax_fetchDatabaseDetails.responseText);
-        
+
         for (var i in data) {
             dictionary_cols[data[i].table_name + '.' + data[i].column_name] = data[i];
         }
@@ -216,7 +217,7 @@ function loadProjectFromDatabase(project, callbackWhenDone) {
                 'toText': __relationText_to
             });
         }
-        
+
         callbackWhenDone(dictionary_cols, dictionary_tables);
 
     }); // End of function that exectues when 2 AJAX calls are done
@@ -229,13 +230,13 @@ function loadProjectFromDatabase(project, callbackWhenDone) {
  * $$param {Array} linkDataArray
  */
 function render(nodeDataArray, linkDataArray, keepLinkPosition) {
-    
+
     if(!keepLinkPosition) {
         for(var i=0; i < linkDataArray.length; i++) {
             linkDataArray[i].points = null;
         }
     }
-    
+
     currentNodes = nodeDataArray;
     currentLinks = linkDataArray;
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
@@ -250,12 +251,12 @@ function render(nodeDataArray, linkDataArray, keepLinkPosition) {
  * $$param {Array} linkDataArray
  */
 function makeClusterEntities(dictionary_cols, dictionary_tables) {
-    
+
     var data = cluster(dictionary_cols, dictionary_tables);
-    
+
     var cluster_all_entities = data.entities;
     var cluster_all_relations = data.relations;
-    
+
     topLevelNodes = [];
     topLevelLinks = [];
 
@@ -315,6 +316,36 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
         }
 
         // set attributes of entity
+        var itemList = [];
+        itemList.push({'name': 'No. of Tables: ' + entityData.length,
+                    //'isKey': 'false', // (boolean) primary key
+                    'figure': 'Cube1',
+                    'color': 'blue'});
+
+        if (linkData.length == 0){
+          itemList.push({'name': 'No. of Links: None',
+                        //'isKey': 'false', // (boolean) primary key
+                        'figure': 'Cube1',
+                            'color': 'green'});
+        } else {
+            itemList.push({'name': 'No. of Links: ' + linkData.length,
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'green'});
+          }
+        // all are at level 1
+        itemList.push({'name': 'Entity Depth: ' + "1",
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'orange'});
+
+        itemList.push({'name': 'Entity keywords: ' + cluster_keyword_entities[i],
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'orange'});
+
+
+
         var item = {'name': 'entity',
                     'isKey': 'false', // (boolean) primary key
                     'figure': 'Cube1',
@@ -328,7 +359,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'linkData': linkData,
             'color': "#E67373",
             'figure': "Rectangle",
-            'items': [item],
+            'items': itemList,
             'drillDownVisible': true
         });
     }
@@ -375,7 +406,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
 
                     for(var l = 0; l < entityData.length; l++) {
                         if(entityData[l].key == otherTableName) {
-                            linkData.push(linka[k]);
+                            linkData.push(links[k]);
                             break;
                         }
                     }
@@ -386,7 +417,33 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             }
         }
 
-        // set attributes of entity
+        // set attributes of relation
+
+        var itemList = [];
+        if ( linkData.length == 0){
+          itemList.push({'name': 'Links: ' + "None" ,
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'blue'});
+        } else {
+          itemList.push({'name': 'Links: ' + linkData[i].from +", "+ linkData[i].to,
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'blue'});
+        }
+
+        itemList.push({'name': 'Entity keywords : ' + cluster_keyword_entities[i] +", "+  cluster_keyword_entities[i+1],
+                      //'isKey': 'false', // (boolean) primary key
+                      'figure': 'Cube1',
+                      'color': 'orange'});
+
+
+        var item = {'name': 'relation',
+                    'isKey': 'false', // (boolean) primary key
+                    'figure': 'Cube1',
+                    'color': 'red'};
+
+
         var item = {'name': 'relation',
                     'isKey': 'false', // (boolean) primary key
                     'figure': 'Cube1',
@@ -402,12 +459,12 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'color': '#E6A773',
             'drillDownVisible': true,
             'figure': 'RoundedRectangle',
-            'items': [item]
+            'items': itemList
         });
     }
 
     for(var i = 0 ; i < cluster_all_relations.length; i++) {
-        
+
         topLevelLinks.push({
             'visible': true,
             'from': 'AE ' + (2*i),
@@ -752,6 +809,7 @@ function cluster(dictionary_cols, dictionary_tables) {
     // Init
     var cluster_all_entities = [];
     var cluster_all_relations = [];
+    cluster_keyword_entities = [];
 
     // For one iteration of clustering
     var cluster_a;
@@ -798,7 +856,8 @@ function cluster(dictionary_cols, dictionary_tables) {
         }
 
         // Setting up this iteration
-
+        cluster_keyword_entities.push(str_start );
+        cluster_keyword_entities.push(str_start2 );
         // prev = curr
         list_keys_pri_prev = list_keys_pri;
         list_keys_pri = [];
