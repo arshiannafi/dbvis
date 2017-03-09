@@ -272,7 +272,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
                 'visible': true,
                 'items': dictionary_tables[tableName].cols, // cols of the table
                 'drillDownVisible': false,
-                'color': 'yellow'
+                'color': 'white'
             });
         }
 
@@ -325,7 +325,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'visiblity': true,
             'nodeData': entityData,
             'linkData': linkData,
-            'color': 'red',
+            'color': "#E67373",
             'items': [item],
             'drillDownVisible': true
         });
@@ -344,7 +344,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
                 'visible': true,
                 'items': dictionary_tables[tableName].cols, // cols of the table
                 'drillDownVisible': false,
-                'color': 'yellow'
+                'color': 'white'
             });
         }
 
@@ -396,7 +396,7 @@ function makeClusterEntities(dictionary_cols, dictionary_tables) {
             'visiblity': true,
             'nodeData': entityData,
             'linkData': linkData,
-            'color': 'blue',
+            'color': '#E6A773',
             'drillDownVisible': true,
             'items': [item]
         });
@@ -538,7 +538,6 @@ function initDiagramCanvas() {
             isShadowed: true,
             shadowColor: "#C5C1AA"
         },
-        //new go.Binding("Color", "color"),
         new go.Binding("keyForButton", "key"),
         new go.Binding("location", "location").makeTwoWay(),
         new go.Binding("visible", "visible").makeTwoWay(),
@@ -547,7 +546,8 @@ function initDiagramCanvas() {
             fill: 'white',
             stroke: "#756875",
             strokeWidth: 3
-        }),
+        },
+          new go.Binding("fill", "color")),
         $$(go.Panel, "Table",
             {
                 margin: 8,
