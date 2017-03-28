@@ -185,6 +185,7 @@ class ProjectManager {
             IPaddress:  $("#create-form input[name^='address']").val(),
             port:       $("#create-form input[name^='port']").val(),
             db:         $("#create-form input[name^='database']").val(),
+            source:     $("#create-form input[name^='source']").val(),
             username:   $("#create-form input[name^='username']").val(),
             password:   $("#create-form input[name^='password']").val()
         }
@@ -209,6 +210,7 @@ class ProjectManager {
             IPaddress:  $("#edit-form input[name^='address']").val(),
             port:       $("#edit-form input[name^='port']").val(),
             db:         $("#edit-form input[name^='database']").val(),
+            source:     $("#edit-form input[name^='source']").val(),
             username:   $("#edit-form input[name^='username']").val(),
             password:   $("#edit-form input[name^='password']").val()
         }
@@ -250,6 +252,7 @@ class ProjectManager {
             IPaddress:  this.activeProj.IPaddress,
             port:       this.activeProj.port,
             db:         this.activeProj.db,
+            source:     this.activeProj.source,
             username:   this.activeProj.username,
             password:   this.activeProj.password,
             data:       json,
@@ -262,7 +265,7 @@ class ProjectManager {
                 console.log("[ERROR] Failed to save project");
             });
     }
-    
+
     delete() {
 
         var that = this;
@@ -283,6 +286,7 @@ class ProjectManager {
         $("#edit-form input[name^='address']").first().val(this.activeProj.IPaddress);
         $("#edit-form input[name^='database']").first().val(this.activeProj.db);
         $("#edit-form input[name^='port']").first().val(this.activeProj.port);
+        $("#edit-form input[name^='source']").first().val(this.activeProj.source);
         $("#edit-form input[name^='username']").first().val(this.activeProj.username);
         $("#edit-form input[name^='password']").first().val(this.activeProj.password);
     }
